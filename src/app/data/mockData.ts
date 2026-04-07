@@ -636,11 +636,11 @@ export const labelConfigs: LabelConfig[] = [
 
 // Monthly campaign stats for charts
 export const monthlyCampaignStats = [
-  { month: 'Oct', campaigns: 2, lines: 18, exported: 1 },
-  { month: 'Nov', campaigns: 3, lines: 24, exported: 2 },
-  { month: 'Dic', campaigns: 4, lines: 52, exported: 3 },
-  { month: 'Ene', campaigns: 3, lines: 38, exported: 2 },
-  { month: 'Feb', campaigns: 5, lines: 62, exported: 4 },
-  { month: 'Mar', campaigns: 4, lines: 44, exported: 2 },
-  { month: 'Abr', campaigns: 6, lines: 75, exported: 3 },
+  { id: 'oct', month: 'Oct', campaigns: 2, lines: 18, exported: 1 },
+  { id: 'nov', month: 'Nov', campaigns: 3, lines: 24, exported: 2 },
+  { id: 'dic', month: 'Dic', campaigns: 4, lines: 52, exported: 3 },
+  { id: 'ene', month: 'Ene', campaigns: 3, lines: 38, exported: 2 },
+  { id: 'feb', month: 'Feb', campaigns: 5, lines: 62, exported: 4 },
+  { id: 'mar', month: 'Mar', campaigns: 4, lines: 44, exported: 2 },
+  { id: 'abr', month: 'Abr', campaigns: 6, lines: 75, exported: 3 },
 ];

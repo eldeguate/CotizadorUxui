@@ -175,7 +175,7 @@ export function Dashboard() {
             </div>
           </div>
           <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={monthlyCampaignStats} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+            <AreaChart id="dashboard-campaign-chart" data={monthlyCampaignStats} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="dashboardColorCampaigns" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#007AFF" stopOpacity={0.15} />
@@ -190,8 +190,8 @@ export function Dashboard() {
               <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#8E8E93' }} />
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#8E8E93' }} />
               <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="campaigns" name="campaigns" stroke="#007AFF" strokeWidth={2.5} fill="url(#dashboardColorCampaigns)" dot={false} activeDot={{ r: 4, fill: '#007AFF', strokeWidth: 0 }} />
-              <Area type="monotone" dataKey="exported" name="exported" stroke="#34C759" strokeWidth={2.5} fill="url(#dashboardColorExported)" dot={false} activeDot={{ r: 4, fill: '#34C759', strokeWidth: 0 }} />
+              <Area id="area-campaigns" type="monotone" dataKey="campaigns" name="campaigns" stroke="#007AFF" strokeWidth={2.5} fill="url(#dashboardColorCampaigns)" dot={false} activeDot={{ r: 4, fill: '#007AFF', strokeWidth: 0 }} />
+              <Area id="area-exported" type="monotone" dataKey="exported" name="exported" stroke="#34C759" strokeWidth={2.5} fill="url(#dashboardColorExported)" dot={false} activeDot={{ r: 4, fill: '#34C759', strokeWidth: 0 }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
