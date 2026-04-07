@@ -119,6 +119,13 @@ export interface Department {
   name: string;
 }
 
+export interface Municipio {
+  id: string;
+  departmentId: string;
+  name: string;
+  isCapital?: boolean;
+}
+
 export interface CampaignLine {
   id: string;
   skuId: string;
