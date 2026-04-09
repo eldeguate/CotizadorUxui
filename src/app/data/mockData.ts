@@ -15,6 +15,52 @@ export interface User {
   color: string;
 }
 
+// ─── User Profile Types ──────────────────────────────────────────────────────
+
+export type UserType = 'individual' | 'company';
+export type GeographyAccessLevel = 'national' | 'uma_region' | 'department' | 'municipality' | 'store';
+
+export interface Organization {
+  id: string;
+  companyName: string;
+  nit: string;
+  countryId: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface UserProfile {
+  id: string;
+  userId: string; // Reference to User
+  userType: UserType;
+  nomenclature: string; // channel code + userID
+  userName: string;
+  email: string;
+  whatsapp: string;
+  countryId: string;
+
+  // Organization (for company users)
+  organizationId?: string;
+  parentUserId?: string; // For sub-users within a company
+
+  // Store/Retail codes (optional)
+  internalStoreCode?: string;
+  externalStoreCode?: string;
+  storeId?: string; // Reference to Store
+
+  // Geography access
+  geographyAccessLevel: GeographyAccessLevel;
+  geographyAccessIds: string[]; // IDs of UMA regions, departments, municipalities, or stores
+
+  // Channel
+  channelId: string;
+
+  // Status
+  isActive: boolean;
+  createdAt: string;
+  createdBy: string;
+}
+
 export interface Brand {
   id: string;
   code: string;
@@ -89,6 +135,102 @@ export interface ModelExternalMapping {
   isActive: boolean;
 }
 
+// ─── Geography Types ─────────────────────────────────────────────────────────
+
+export interface Country {
+  id: string;
+  code: string;
+  name: string;
+  isActive: boolean;
+}
+
+export interface UMARegion {
+  id: string;
+  countryId: string;
+  code: string;
+  name: string;
+  description?: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+export interface State {
+  id: string;
+  umaRegionId: string;
+  code: string;
+  name: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+export interface Municipality {
+  id: string;
+  stateId: string;
+  code: string;
+  name: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+// ─── Channel Types ───────────────────────────────────────────────────────────
+
+export interface ChannelCategory {
+  id: string;
+  code: string;
+  name: string;
+  description?: string;
+  color: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+export interface Channel {
+  id: string;
+  categoryId: string;
+  code: string;
+  name: string;
+  description?: string;
+  isActive: boolean;
+  allowedProductIds: string[]; // Model IDs
+  allowedMunicipalityIds: string[]; // Municipality IDs
+}
+
+export interface OwnStore {
+  id: string;
+  channelId: string;
+  code: string;
+  name: string;
+  address: string;
+  municipalityId: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  isActive: boolean;
+}
+
+export interface Distributor {
+  id: string;
+  channelId: string;
+  code: string;
+  name: string;
+  legalName: string;
+  taxId: string;
+  contactPerson: string;
+  contactEmail: string;
+  contactPhone: string;
+  isActive: boolean;
+}
+
+export interface DistributorStore {
+  id: string;
+  distributorId: string;
+  code: string;
+  name: string;
+  address: string;
+  municipalityId: string;
+  contactPhone?: string;
+  isActive: boolean;
+}
+
 export interface SKU {
   id: string;
   modelId: string;
@@ -101,11 +243,7 @@ export interface SKU {
   active: boolean;
 }
 
-export interface Country {
-  id: string;
-  name: string;
-  code: string;
-}
+// Removed duplicate Country interface - using the one at line 94
 
 export interface Region {
   id: string;
@@ -372,35 +510,8 @@ export const skus: SKU[] = [
   { id: 's14', modelId: 'm_dominar_400', modelName: 'Avenger Street 160', name: 'Avenger Street 160 2025 Negro', code: 'AVS160-BLK-25', color: 'Negro', modelYear: 2025, basePVP: 10200000, active: true },
 ];
 
-export const countries: Country[] = [
-  { id: 'co1', name: 'Colombia', code: 'COL' },
-  { id: 'co2', name: 'Ecuador', code: 'ECU' },
-  { id: 'co3', name: 'Perú', code: 'PER' },
-];
-
-export const regions: Region[] = [
-  { id: 'r1', countryId: 'co1', name: 'Antioquia' },
-  { id: 'r2', countryId: 'co1', name: 'Cundinamarca' },
-  { id: 'r3', countryId: 'co1', name: 'Valle del Cauca' },
-  { id: 'r4', countryId: 'co1', name: 'Atlántico' },
-  { id: 'r5', countryId: 'co1', name: 'Santander' },
-  { id: 'r6', countryId: 'co1', name: 'Bolívar' },
-];
-
-export const departments: Department[] = [
-  { id: 'd1', regionId: 'r1', name: 'Medellín' },
-  { id: 'd2', regionId: 'r1', name: 'Bello' },
-  { id: 'd3', regionId: 'r1', name: 'Itagüí' },
-  { id: 'd4', regionId: 'r1', name: 'Envigado' },
-  { id: 'd5', regionId: 'r2', name: 'Bogotá D.C.' },
-  { id: 'd6', regionId: 'r2', name: 'Soacha' },
-  { id: 'd7', regionId: 'r2', name: 'Chía' },
-  { id: 'd8', regionId: 'r3', name: 'Cali' },
-  { id: 'd9', regionId: 'r3', name: 'Palmira' },
-  { id: 'd10', regionId: 'r4', name: 'Barranquilla' },
-  { id: 'd11', regionId: 'r4', name: 'Soledad' },
-  { id: 'd12', regionId: 'r5', name: 'Bucaramanga' },
-];
+// Old geography data removed - now using comprehensive geography hierarchy below
+// (countries, umaRegions, states, municipalities)
 
 export const campaigns: Campaign[] = [
   {
@@ -643,4 +754,244 @@ export const monthlyCampaignStats = [
   { id: 'feb', month: 'Feb', campaigns: 5, lines: 62, exported: 4 },
   { id: 'mar', month: 'Mar', campaigns: 4, lines: 44, exported: 2 },
   { id: 'abr', month: 'Abr', campaigns: 6, lines: 75, exported: 3 },
+];
+
+// ─── Geography Data ──────────────────────────────────────────────────────────
+
+export const countries: Country[] = [
+  { id: 'co1', code: 'CO', name: 'Colombia', isActive: true },
+];
+
+export const umaRegions: UMARegion[] = [
+  { id: 'uma_andina', countryId: 'co1', code: 'ANDINA', name: 'Región Andina', description: 'Zona montañosa central', isActive: true, sortOrder: 1 },
+  { id: 'uma_caribe', countryId: 'co1', code: 'CARIBE', name: 'Región Caribe', description: 'Costa norte', isActive: true, sortOrder: 2 },
+  { id: 'uma_pacifica', countryId: 'co1', code: 'PACIFICA', name: 'Región Pacífica', description: 'Costa oeste', isActive: true, sortOrder: 3 },
+  { id: 'uma_orinoquia', countryId: 'co1', code: 'ORINOQ', name: 'Región Orinoquía', description: 'Llanos orientales', isActive: true, sortOrder: 4 },
+  { id: 'uma_amazonia', countryId: 'co1', code: 'AMAZON', name: 'Región Amazonía', description: 'Sur amazónico', isActive: true, sortOrder: 5 },
+];
+
+export const states: State[] = [
+  // Región Andina
+  { id: 'state_cundinamarca', umaRegionId: 'uma_andina', code: 'CUN', name: 'Cundinamarca', isActive: true, sortOrder: 1 },
+  { id: 'state_antioquia', umaRegionId: 'uma_andina', code: 'ANT', name: 'Antioquia', isActive: true, sortOrder: 2 },
+  { id: 'state_boyaca', umaRegionId: 'uma_andina', code: 'BOY', name: 'Boyacá', isActive: true, sortOrder: 3 },
+  { id: 'state_santander', umaRegionId: 'uma_andina', code: 'SAN', name: 'Santander', isActive: true, sortOrder: 4 },
+  { id: 'state_valle', umaRegionId: 'uma_andina', code: 'VAC', name: 'Valle del Cauca', isActive: true, sortOrder: 5 },
+
+  // Región Caribe
+  { id: 'state_atlantico', umaRegionId: 'uma_caribe', code: 'ATL', name: 'Atlántico', isActive: true, sortOrder: 1 },
+  { id: 'state_bolivar', umaRegionId: 'uma_caribe', code: 'BOL', name: 'Bolívar', isActive: true, sortOrder: 2 },
+  { id: 'state_magdalena', umaRegionId: 'uma_caribe', code: 'MAG', name: 'Magdalena', isActive: true, sortOrder: 3 },
+
+  // Región Pacífica
+  { id: 'state_choco', umaRegionId: 'uma_pacifica', code: 'CHO', name: 'Chocó', isActive: true, sortOrder: 1 },
+  { id: 'state_cauca', umaRegionId: 'uma_pacifica', code: 'CAU', name: 'Cauca', isActive: true, sortOrder: 2 },
+];
+
+export const municipalities: Municipality[] = [
+  // Cundinamarca
+  { id: 'mun_bogota', stateId: 'state_cundinamarca', code: 'BOG', name: 'Bogotá D.C.', isActive: true, sortOrder: 1 },
+  { id: 'mun_soacha', stateId: 'state_cundinamarca', code: 'SOA', name: 'Soacha', isActive: true, sortOrder: 2 },
+  { id: 'mun_funza', stateId: 'state_cundinamarca', code: 'FUN', name: 'Funza', isActive: true, sortOrder: 3 },
+  { id: 'mun_chia', stateId: 'state_cundinamarca', code: 'CHI', name: 'Chía', isActive: true, sortOrder: 4 },
+
+  // Antioquia
+  { id: 'mun_medellin', stateId: 'state_antioquia', code: 'MED', name: 'Medellín', isActive: true, sortOrder: 1 },
+  { id: 'mun_envigado', stateId: 'state_antioquia', code: 'ENV', name: 'Envigado', isActive: true, sortOrder: 2 },
+  { id: 'mun_itagui', stateId: 'state_antioquia', code: 'ITA', name: 'Itagüí', isActive: true, sortOrder: 3 },
+  { id: 'mun_bello', stateId: 'state_antioquia', code: 'BEL', name: 'Bello', isActive: true, sortOrder: 4 },
+
+  // Valle del Cauca
+  { id: 'mun_cali', stateId: 'state_valle', code: 'CAL', name: 'Cali', isActive: true, sortOrder: 1 },
+  { id: 'mun_palmira', stateId: 'state_valle', code: 'PAL', name: 'Palmira', isActive: true, sortOrder: 2 },
+  { id: 'mun_buenaventura', stateId: 'state_valle', code: 'BVE', name: 'Buenaventura', isActive: true, sortOrder: 3 },
+
+  // Atlántico
+  { id: 'mun_barranquilla', stateId: 'state_atlantico', code: 'BAQ', name: 'Barranquilla', isActive: true, sortOrder: 1 },
+  { id: 'mun_soledad', stateId: 'state_atlantico', code: 'SOL', name: 'Soledad', isActive: true, sortOrder: 2 },
+
+  // Bolívar
+  { id: 'mun_cartagena', stateId: 'state_bolivar', code: 'CTG', name: 'Cartagena', isActive: true, sortOrder: 1 },
+];
+
+// ─── Channel Data ────────────────────────────────────────────────────────────
+
+export const channelCategories: ChannelCategory[] = [
+  { id: 'ch_b2b', code: 'B2B', name: 'Business to Business (Corporativo UMA)', description: 'Ventas corporativas directas', color: '#007AFF', isActive: true, sortOrder: 1 },
+  { id: 'ch_retail', code: 'RETAIL', name: 'Retail (Grandes Superficies)', description: 'Cadenas de retail y grandes superficies', color: '#34C759', isActive: true, sortOrder: 2 },
+  { id: 'ch_alianzas', code: 'ALIANZAS', name: 'Alianzas', description: 'Alianzas estratégicas y partners', color: '#FF9500', isActive: true, sortOrder: 3 },
+  { id: 'ch_propias', code: 'PROPIAS', name: 'Tiendas Propias', description: 'Red de tiendas propias de UMA', color: '#AF52DE', isActive: true, sortOrder: 4 },
+  { id: 'ch_distribuidores', code: 'DISTRIB', name: 'Distribuidores Exclusivos', description: 'Red de distribuidores autorizados', color: '#FF2D55', isActive: true, sortOrder: 5 },
+  { id: 'ch_agentes', code: 'AGENTES', name: 'Agentes Independientes', description: 'Red de agentes comerciales independientes', color: '#5AC8FA', isActive: true, sortOrder: 6 },
+];
+
+export const channels: Channel[] = [
+  { id: 'chan_corp_national', categoryId: 'ch_b2b', code: 'CORP-NAC', name: 'Corporativo Nacional', description: 'Grandes cuentas corporativas a nivel nacional', isActive: true, allowedProductIds: [], allowedMunicipalityIds: [] },
+  { id: 'chan_alkosto', categoryId: 'ch_retail', code: 'ALK', name: 'Alkosto', description: 'Cadena Alkosto', isActive: true, allowedProductIds: [], allowedMunicipalityIds: [] },
+  { id: 'chan_exito', categoryId: 'ch_retail', code: 'EXITO', name: 'Éxito', description: 'Cadena Éxito', isActive: true, allowedProductIds: [], allowedMunicipalityIds: [] },
+  { id: 'chan_financieras', categoryId: 'ch_alianzas', code: 'FINA', name: 'Alianzas Financieras', description: 'Bancos y entidades financieras', isActive: true, allowedProductIds: [], allowedMunicipalityIds: [] },
+  { id: 'chan_tiendas_bogota', categoryId: 'ch_propias', code: 'TP-BOG', name: 'Tiendas Propias Bogotá', isActive: true, allowedProductIds: [], allowedMunicipalityIds: ['mun_bogota', 'mun_soacha', 'mun_chia'] },
+  { id: 'chan_tiendas_medellin', categoryId: 'ch_propias', code: 'TP-MED', name: 'Tiendas Propias Medellín', isActive: true, allowedProductIds: [], allowedMunicipalityIds: ['mun_medellin', 'mun_envigado', 'mun_itagui'] },
+];
+
+export const ownStores: OwnStore[] = [
+  { id: 'store_bog_norte', channelId: 'chan_tiendas_bogota', code: 'TP-BOG-01', name: 'UMA Bogotá Norte', address: 'Calle 140 # 15-20', municipalityId: 'mun_bogota', contactPhone: '+57 601 1234567', contactEmail: 'norte@uma.com', isActive: true },
+  { id: 'store_bog_sur', channelId: 'chan_tiendas_bogota', code: 'TP-BOG-02', name: 'UMA Bogotá Sur', address: 'Av. Boyacá # 45-30', municipalityId: 'mun_bogota', contactPhone: '+57 601 7654321', contactEmail: 'sur@uma.com', isActive: true },
+  { id: 'store_soacha', channelId: 'chan_tiendas_bogota', code: 'TP-BOG-03', name: 'UMA Soacha', address: 'Av. Indumil # 30-15', municipalityId: 'mun_soacha', contactPhone: '+57 601 9876543', contactEmail: 'soacha@uma.com', isActive: true },
+  { id: 'store_med_centro', channelId: 'chan_tiendas_medellin', code: 'TP-MED-01', name: 'UMA Medellín Centro', address: 'Carrera 50 # 30-20', municipalityId: 'mun_medellin', contactPhone: '+57 604 1112233', contactEmail: 'medcentro@uma.com', isActive: true },
+  { id: 'store_envigado', channelId: 'chan_tiendas_medellin', code: 'TP-MED-02', name: 'UMA Envigado', address: 'Calle 34 Sur # 25-40', municipalityId: 'mun_envigado', contactPhone: '+57 604 3344556', contactEmail: 'envigado@uma.com', isActive: true },
+];
+
+export const distributors: Distributor[] = [
+  { id: 'dist_andes', channelId: 'ch_distribuidores', code: 'DIST-AND', name: 'Distribuidora Andes', legalName: 'Distribuidora Andes S.A.S.', taxId: '900123456-1', contactPerson: 'Carlos Rodríguez', contactEmail: 'carlos@distandes.com', contactPhone: '+57 310 1234567', isActive: true },
+  { id: 'dist_caribe', channelId: 'ch_distribuidores', code: 'DIST-CAR', name: 'Distribuidora Caribe', legalName: 'Distribuidora Caribe Ltda.', taxId: '900234567-2', contactPerson: 'Ana Martínez', contactEmail: 'ana@distcaribe.com', contactPhone: '+57 315 2345678', isActive: true },
+];
+
+export const distributorStores: DistributorStore[] = [
+  { id: 'dstore_andes_cali', distributorId: 'dist_andes', code: 'DAND-CAL-01', name: 'Andes Cali Centro', address: 'Calle 10 # 5-30', municipalityId: 'mun_cali', contactPhone: '+57 602 1234567', isActive: true },
+  { id: 'dstore_andes_palmira', distributorId: 'dist_andes', code: 'DAND-PAL-01', name: 'Andes Palmira', address: 'Carrera 30 # 20-15', municipalityId: 'mun_palmira', contactPhone: '+57 602 7654321', isActive: true },
+  { id: 'dstore_caribe_barranquilla', distributorId: 'dist_caribe', code: 'DCAR-BAQ-01', name: 'Caribe Barranquilla Norte', address: 'Calle 85 # 52-10', municipalityId: 'mun_barranquilla', contactPhone: '+57 605 3334444', isActive: true },
+  { id: 'dstore_caribe_cartagena', distributorId: 'dist_caribe', code: 'DCAR-CTG-01', name: 'Caribe Cartagena', address: 'Avenida Pedro de Heredia # 30-40', municipalityId: 'mun_cartagena', contactPhone: '+57 605 5556666', isActive: true },
+];
+
+export const regions: Region[] = [
+  { id: 'region_andina', countryId: 'country_colombia', name: 'Región Andina' },
+  { id: 'region_caribe', countryId: 'country_colombia', name: 'Región Caribe' },
+  { id: 'region_pacifica', countryId: 'country_colombia', name: 'Región Pacífica' },
+  { id: 'region_orinoquia', countryId: 'country_colombia', name: 'Región Orinoquía' },
+  { id: 'region_amazonia', countryId: 'country_colombia', name: 'Región Amazonía' },
+];
+
+export const departments: Department[] = [
+  { id: 'dept_cundinamarca', regionId: 'region_andina', name: 'Cundinamarca' },
+  { id: 'dept_antioquia', regionId: 'region_andina', name: 'Antioquia' },
+  { id: 'dept_valle', regionId: 'region_pacifica', name: 'Valle del Cauca' },
+  { id: 'dept_atlantico', regionId: 'region_caribe', name: 'Atlántico' },
+  { id: 'dept_bolivar', regionId: 'region_caribe', name: 'Bolívar' },
+  { id: 'dept_meta', regionId: 'region_orinoquia', name: 'Meta' },
+];
+
+// ─── Organizations & User Profiles ───────────────────────────────────────────
+
+export const organizations: Organization[] = [
+  { id: 'org_1', companyName: 'Distribuidora El Sol', nit: '900123456-1', countryId: 'country_colombia', isActive: true, createdAt: '2024-01-15' },
+  { id: 'org_2', companyName: 'Grupo Comercial Andino', nit: '900234567-2', countryId: 'country_colombia', isActive: true, createdAt: '2024-02-10' },
+  { id: 'org_3', companyName: 'Motocenter S.A.S.', nit: '900345678-3', countryId: 'country_colombia', isActive: true, createdAt: '2024-03-05' },
+];
+
+export const userProfiles: UserProfile[] = [
+  // Individual user - National access
+  {
+    id: 'up_1',
+    userId: 'user_1',
+    userType: 'individual',
+    nomenclature: 'B2B-001',
+    userName: 'Carlos Mendoza',
+    email: 'carlos.mendoza@email.com',
+    whatsapp: '+57 310 1234567',
+    countryId: 'country_colombia',
+    geographyAccessLevel: 'national',
+    geographyAccessIds: ['country_colombia'],
+    channelId: 'chan_corp_national',
+    isActive: true,
+    createdAt: '2024-01-10',
+    createdBy: 'admin'
+  },
+  // Company user with multiple sub-users - Organization parent
+  {
+    id: 'up_2',
+    userId: 'user_2',
+    userType: 'company',
+    nomenclature: 'PROPIAS-002',
+    userName: 'Ana García',
+    email: 'ana.garcia@uma.com',
+    whatsapp: '+57 315 2345678',
+    countryId: 'country_colombia',
+    organizationId: 'org_1',
+    internalStoreCode: 'TP-BOG-01',
+    storeId: 'store_bog_norte',
+    geographyAccessLevel: 'uma_region',
+    geographyAccessIds: ['uma_andina'],
+    channelId: 'chan_tiendas_bogota',
+    isActive: true,
+    createdAt: '2024-01-15',
+    createdBy: 'admin'
+  },
+  // Sub-user within organization
+  {
+    id: 'up_3',
+    userId: 'user_3',
+    userType: 'company',
+    nomenclature: 'PROPIAS-003',
+    userName: 'Luis Rodríguez',
+    email: 'luis.rodriguez@uma.com',
+    whatsapp: '+57 320 3456789',
+    countryId: 'country_colombia',
+    organizationId: 'org_1',
+    parentUserId: 'up_2',
+    internalStoreCode: 'TP-BOG-02',
+    storeId: 'store_bog_sur',
+    geographyAccessLevel: 'store',
+    geographyAccessIds: ['store_bog_sur'],
+    channelId: 'chan_tiendas_bogota',
+    isActive: true,
+    createdAt: '2024-02-01',
+    createdBy: 'up_2'
+  },
+  // Individual user - Department level access
+  {
+    id: 'up_4',
+    userId: 'user_4',
+    userType: 'individual',
+    nomenclature: 'RETAIL-004',
+    userName: 'María López',
+    email: 'maria.lopez@alkosto.com',
+    whatsapp: '+57 318 4567890',
+    countryId: 'country_colombia',
+    geographyAccessLevel: 'department',
+    geographyAccessIds: ['state_antioquia'],
+    channelId: 'chan_alkosto',
+    isActive: true,
+    createdAt: '2024-03-01',
+    createdBy: 'admin'
+  },
+  // Company user - Municipality level
+  {
+    id: 'up_5',
+    userId: 'user_5',
+    userType: 'company',
+    nomenclature: 'DISTRIB-005',
+    userName: 'Pedro Sánchez',
+    email: 'pedro.sanchez@distandes.com',
+    whatsapp: '+57 312 5678901',
+    countryId: 'country_colombia',
+    organizationId: 'org_2',
+    externalStoreCode: 'DAND-CAL-01',
+    geographyAccessLevel: 'municipality',
+    geographyAccessIds: ['mun_cali', 'mun_palmira'],
+    channelId: 'ch_distribuidores',
+    isActive: true,
+    createdAt: '2024-03-10',
+    createdBy: 'admin'
+  },
+  // Sub-user in dealer group
+  {
+    id: 'up_6',
+    userId: 'user_6',
+    userType: 'company',
+    nomenclature: 'DISTRIB-006',
+    userName: 'Sofia Ramírez',
+    email: 'sofia.ramirez@distandes.com',
+    whatsapp: '+57 314 6789012',
+    countryId: 'country_colombia',
+    organizationId: 'org_2',
+    parentUserId: 'up_5',
+    externalStoreCode: 'DAND-PAL-01',
+    geographyAccessLevel: 'municipality',
+    geographyAccessIds: ['mun_palmira'],
+    channelId: 'ch_distribuidores',
+    isActive: true,
+    createdAt: '2024-03-15',
+    createdBy: 'up_5'
+  },
 ];

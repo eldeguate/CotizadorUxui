@@ -1,0 +1,1040 @@
+// src/app/data/geographyData.ts
+// UMA Cotizador — Geographic hierarchy: Country > Region (UMA grouping) > Department > Municipio
+// NOTE: UMA regions are a custom business grouping and should be validated with the commercial team.
+// Municipios include capital + main cities per department. Full catalogs to be imported from
+// official sources (INE, DANE, INE Guatemala, etc.) into Supabase later.
+
+export interface Country {
+  id: string;
+  name: string;
+  code: string; // ISO alpha-2
+  currency: string;
+  flag: string;
+}
+
+export interface Region {
+  id: string;
+  countryId: string;
+  name: string;
+  description?: string;
+}
+
+export interface Department {
+  id: string;
+  regionId: string;
+  countryId: string;
+  name: string;
+  capital?: string;
+}
+
+export interface Municipio {
+  id: string;
+  departmentId: string;
+  name: string;
+  isCapital?: boolean;
+}
+
+// ─── COUNTRIES ───────────────────────────────────────────────────────────────
+export const countries: Country[] = [
+  { id: 'gt', name: 'Guatemala',   code: 'GT', currency: 'GTQ', flag: '🇬🇹' },
+  { id: 'sv', name: 'El Salvador', code: 'SV', currency: 'USD', flag: '🇸🇻' },
+  { id: 'hn', name: 'Honduras',    code: 'HN', currency: 'HNL', flag: '🇭🇳' },
+  { id: 'ni', name: 'Nicaragua',   code: 'NI', currency: 'NIO', flag: '🇳🇮' },
+  { id: 'cr', name: 'Costa Rica',  code: 'CR', currency: 'CRC', flag: '🇨🇷' },
+  { id: 'co', name: 'Colombia',    code: 'CO', currency: 'COP', flag: '🇨🇴' },
+  { id: 've', name: 'Venezuela',   code: 'VE', currency: 'VES', flag: '🇻🇪' },
+  { id: 'es', name: 'España',      code: 'ES', currency: 'EUR', flag: '🇪🇸' },
+  { id: 'pt', name: 'Portugal',    code: 'PT', currency: 'EUR', flag: '🇵🇹' },
+];
+
+// ─── REGIONS (UMA custom grouping) ───────────────────────────────────────────
+export const regions: Region[] = [
+  // Guatemala — based on INE Guatemala 8 regiones
+  { id: 'gt-r-metropolitana', countryId: 'gt', name: 'Metropolitana' },
+  { id: 'gt-r-norte',         countryId: 'gt', name: 'Norte' },
+  { id: 'gt-r-nororiente',    countryId: 'gt', name: 'Nororiente' },
+  { id: 'gt-r-suroriente',    countryId: 'gt', name: 'Suroriente' },
+  { id: 'gt-r-central',       countryId: 'gt', name: 'Central' },
+  { id: 'gt-r-suroccidente',  countryId: 'gt', name: 'Suroccidente' },
+  { id: 'gt-r-noroccidente',  countryId: 'gt', name: 'Noroccidente' },
+  { id: 'gt-r-peten',         countryId: 'gt', name: 'Petén' },
+
+  // El Salvador
+  { id: 'sv-r-occidental', countryId: 'sv', name: 'Occidental' },
+  { id: 'sv-r-central',    countryId: 'sv', name: 'Central' },
+  { id: 'sv-r-oriental',   countryId: 'sv', name: 'Oriental' },
+
+  // Honduras
+  { id: 'hn-r-noroccidental', countryId: 'hn', name: 'Noroccidental' },
+  { id: 'hn-r-norte',         countryId: 'hn', name: 'Norte' },
+  { id: 'hn-r-nororiental',   countryId: 'hn', name: 'Nororiental' },
+  { id: 'hn-r-central',       countryId: 'hn', name: 'Central' },
+  { id: 'hn-r-sur',           countryId: 'hn', name: 'Sur' },
+  { id: 'hn-r-oriental',      countryId: 'hn', name: 'Oriental' },
+  { id: 'hn-r-insular',       countryId: 'hn', name: 'Insular' },
+
+  // Nicaragua
+  { id: 'ni-r-pacifico', countryId: 'ni', name: 'Pacífico' },
+  { id: 'ni-r-central',  countryId: 'ni', name: 'Central' },
+  { id: 'ni-r-caribe',   countryId: 'ni', name: 'Caribe' },
+
+  // Costa Rica
+  { id: 'cr-r-central',  countryId: 'cr', name: 'Central' },
+  { id: 'cr-r-pacifico', countryId: 'cr', name: 'Pacífico' },
+  { id: 'cr-r-caribe',   countryId: 'cr', name: 'Caribe' },
+
+  // Colombia
+  { id: 'co-r-andina',    countryId: 'co', name: 'Andina' },
+  { id: 'co-r-caribe',    countryId: 'co', name: 'Caribe' },
+  { id: 'co-r-pacifica',  countryId: 'co', name: 'Pacífica' },
+  { id: 'co-r-orinoquia', countryId: 'co', name: 'Orinoquía' },
+  { id: 'co-r-amazonia',  countryId: 'co', name: 'Amazonía' },
+
+  // Venezuela
+  { id: 've-r-capital',         countryId: 've', name: 'Capital' },
+  { id: 've-r-central',         countryId: 've', name: 'Central' },
+  { id: 've-r-llanos',          countryId: 've', name: 'Los Llanos' },
+  { id: 've-r-centroccidental', countryId: 've', name: 'Centroccidental' },
+  { id: 've-r-zuliana',         countryId: 've', name: 'Zuliana' },
+  { id: 've-r-andes',           countryId: 've', name: 'Los Andes' },
+  { id: 've-r-nororiental',     countryId: 've', name: 'Nororiental' },
+  { id: 've-r-guayana',         countryId: 've', name: 'Guayana' },
+
+  // España — 7 UMA regions grouping the 17 CCAA + Ceuta/Melilla
+  { id: 'es-r-noroeste', countryId: 'es', name: 'Noroeste' },
+  { id: 'es-r-norte',    countryId: 'es', name: 'Norte' },
+  { id: 'es-r-nordeste', countryId: 'es', name: 'Nordeste' },
+  { id: 'es-r-centro',   countryId: 'es', name: 'Centro' },
+  { id: 'es-r-este',     countryId: 'es', name: 'Este' },
+  { id: 'es-r-sur',      countryId: 'es', name: 'Sur' },
+  { id: 'es-r-canarias', countryId: 'es', name: 'Canarias' },
+
+  // Portugal — NUTS II
+  { id: 'pt-r-norte',   countryId: 'pt', name: 'Norte' },
+  { id: 'pt-r-centro',  countryId: 'pt', name: 'Centro' },
+  { id: 'pt-r-lisboa',  countryId: 'pt', name: 'Área Metropolitana de Lisboa' },
+  { id: 'pt-r-alentejo',countryId: 'pt', name: 'Alentejo' },
+  { id: 'pt-r-algarve', countryId: 'pt', name: 'Algarve' },
+  { id: 'pt-r-acores',  countryId: 'pt', name: 'Açores' },
+  { id: 'pt-r-madeira', countryId: 'pt', name: 'Madeira' },
+];
+
+// ─── DEPARTMENTS ─────────────────────────────────────────────────────────────
+export const departments: Department[] = [
+  // ── GUATEMALA ──
+  { id: 'gt-d-guatemala',       countryId: 'gt', regionId: 'gt-r-metropolitana', name: 'Guatemala',      capital: 'Ciudad de Guatemala' },
+  { id: 'gt-d-alta-verapaz',    countryId: 'gt', regionId: 'gt-r-norte',         name: 'Alta Verapaz',   capital: 'Cobán' },
+  { id: 'gt-d-baja-verapaz',    countryId: 'gt', regionId: 'gt-r-norte',         name: 'Baja Verapaz',   capital: 'Salamá' },
+  { id: 'gt-d-el-progreso',     countryId: 'gt', regionId: 'gt-r-nororiente',    name: 'El Progreso',    capital: 'Guastatoya' },
+  { id: 'gt-d-izabal',          countryId: 'gt', regionId: 'gt-r-nororiente',    name: 'Izabal',         capital: 'Puerto Barrios' },
+  { id: 'gt-d-zacapa',          countryId: 'gt', regionId: 'gt-r-nororiente',    name: 'Zacapa',         capital: 'Zacapa' },
+  { id: 'gt-d-chiquimula',      countryId: 'gt', regionId: 'gt-r-nororiente',    name: 'Chiquimula',     capital: 'Chiquimula' },
+  { id: 'gt-d-santa-rosa',      countryId: 'gt', regionId: 'gt-r-suroriente',    name: 'Santa Rosa',     capital: 'Cuilapa' },
+  { id: 'gt-d-jalapa',          countryId: 'gt', regionId: 'gt-r-suroriente',    name: 'Jalapa',         capital: 'Jalapa' },
+  { id: 'gt-d-jutiapa',         countryId: 'gt', regionId: 'gt-r-suroriente',    name: 'Jutiapa',        capital: 'Jutiapa' },
+  { id: 'gt-d-sacatepequez',    countryId: 'gt', regionId: 'gt-r-central',       name: 'Sacatepéquez',   capital: 'Antigua Guatemala' },
+  { id: 'gt-d-chimaltenango',   countryId: 'gt', regionId: 'gt-r-central',       name: 'Chimaltenango',  capital: 'Chimaltenango' },
+  { id: 'gt-d-escuintla',       countryId: 'gt', regionId: 'gt-r-central',       name: 'Escuintla',      capital: 'Escuintla' },
+  { id: 'gt-d-solola',          countryId: 'gt', regionId: 'gt-r-suroccidente',  name: 'Sololá',         capital: 'Sololá' },
+  { id: 'gt-d-totonicapan',     countryId: 'gt', regionId: 'gt-r-suroccidente',  name: 'Totonicapán',    capital: 'Totonicapán' },
+  { id: 'gt-d-quetzaltenango',  countryId: 'gt', regionId: 'gt-r-suroccidente',  name: 'Quetzaltenango', capital: 'Quetzaltenango' },
+  { id: 'gt-d-suchitepequez',   countryId: 'gt', regionId: 'gt-r-suroccidente',  name: 'Suchitepéquez',  capital: 'Mazatenango' },
+  { id: 'gt-d-retalhuleu',      countryId: 'gt', regionId: 'gt-r-suroccidente',  name: 'Retalhuleu',     capital: 'Retalhuleu' },
+  { id: 'gt-d-san-marcos',      countryId: 'gt', regionId: 'gt-r-suroccidente',  name: 'San Marcos',     capital: 'San Marcos' },
+  { id: 'gt-d-huehuetenango',   countryId: 'gt', regionId: 'gt-r-noroccidente',  name: 'Huehuetenango',  capital: 'Huehuetenango' },
+  { id: 'gt-d-quiche',          countryId: 'gt', regionId: 'gt-r-noroccidente',  name: 'Quiché',         capital: 'Santa Cruz del Quiché' },
+  { id: 'gt-d-peten',           countryId: 'gt', regionId: 'gt-r-peten',         name: 'Petén',          capital: 'Flores' },
+
+  // ── EL SALVADOR ──
+  { id: 'sv-d-ahuachapan',   countryId: 'sv', regionId: 'sv-r-occidental', name: 'Ahuachapán',   capital: 'Ahuachapán' },
+  { id: 'sv-d-santa-ana',    countryId: 'sv', regionId: 'sv-r-occidental', name: 'Santa Ana',    capital: 'Santa Ana' },
+  { id: 'sv-d-sonsonate',    countryId: 'sv', regionId: 'sv-r-occidental', name: 'Sonsonate',    capital: 'Sonsonate' },
+  { id: 'sv-d-la-libertad',  countryId: 'sv', regionId: 'sv-r-central',    name: 'La Libertad',  capital: 'Santa Tecla' },
+  { id: 'sv-d-chalatenango', countryId: 'sv', regionId: 'sv-r-central',    name: 'Chalatenango', capital: 'Chalatenango' },
+  { id: 'sv-d-cuscatlan',    countryId: 'sv', regionId: 'sv-r-central',    name: 'Cuscatlán',    capital: 'Cojutepeque' },
+  { id: 'sv-d-san-salvador', countryId: 'sv', regionId: 'sv-r-central',    name: 'San Salvador', capital: 'San Salvador' },
+  { id: 'sv-d-la-paz',       countryId: 'sv', regionId: 'sv-r-central',    name: 'La Paz',       capital: 'Zacatecoluca' },
+  { id: 'sv-d-cabanas',      countryId: 'sv', regionId: 'sv-r-central',    name: 'Cabañas',      capital: 'Sensuntepeque' },
+  { id: 'sv-d-san-vicente',  countryId: 'sv', regionId: 'sv-r-central',    name: 'San Vicente',  capital: 'San Vicente' },
+  { id: 'sv-d-usulutan',     countryId: 'sv', regionId: 'sv-r-oriental',   name: 'Usulután',     capital: 'Usulután' },
+  { id: 'sv-d-san-miguel',   countryId: 'sv', regionId: 'sv-r-oriental',   name: 'San Miguel',   capital: 'San Miguel' },
+  { id: 'sv-d-morazan',      countryId: 'sv', regionId: 'sv-r-oriental',   name: 'Morazán',      capital: 'San Francisco Gotera' },
+  { id: 'sv-d-la-union',     countryId: 'sv', regionId: 'sv-r-oriental',   name: 'La Unión',     capital: 'La Unión' },
+
+  // ── HONDURAS ──
+  { id: 'hn-d-cortes',            countryId: 'hn', regionId: 'hn-r-noroccidental', name: 'Cortés',            capital: 'San Pedro Sula' },
+  { id: 'hn-d-santa-barbara',     countryId: 'hn', regionId: 'hn-r-noroccidental', name: 'Santa Bárbara',     capital: 'Santa Bárbara' },
+  { id: 'hn-d-copan',             countryId: 'hn', regionId: 'hn-r-noroccidental', name: 'Copán',             capital: 'Santa Rosa de Copán' },
+  { id: 'hn-d-ocotepeque',        countryId: 'hn', regionId: 'hn-r-noroccidental', name: 'Ocotepeque',        capital: 'Ocotepeque' },
+  { id: 'hn-d-lempira',           countryId: 'hn', regionId: 'hn-r-noroccidental', name: 'Lempira',           capital: 'Gracias' },
+  { id: 'hn-d-intibuca',          countryId: 'hn', regionId: 'hn-r-noroccidental', name: 'Intibucá',          capital: 'La Esperanza' },
+  { id: 'hn-d-atlantida',         countryId: 'hn', regionId: 'hn-r-norte',         name: 'Atlántida',         capital: 'La Ceiba' },
+  { id: 'hn-d-yoro',              countryId: 'hn', regionId: 'hn-r-norte',         name: 'Yoro',              capital: 'Yoro' },
+  { id: 'hn-d-colon',             countryId: 'hn', regionId: 'hn-r-norte',         name: 'Colón',             capital: 'Trujillo' },
+  { id: 'hn-d-olancho',           countryId: 'hn', regionId: 'hn-r-nororiental',   name: 'Olancho',           capital: 'Juticalpa' },
+  { id: 'hn-d-gracias-a-dios',    countryId: 'hn', regionId: 'hn-r-nororiental',   name: 'Gracias a Dios',    capital: 'Puerto Lempira' },
+  { id: 'hn-d-francisco-morazan', countryId: 'hn', regionId: 'hn-r-central',       name: 'Francisco Morazán', capital: 'Tegucigalpa' },
+  { id: 'hn-d-comayagua',         countryId: 'hn', regionId: 'hn-r-central',       name: 'Comayagua',         capital: 'Comayagua' },
+  { id: 'hn-d-la-paz',            countryId: 'hn', regionId: 'hn-r-central',       name: 'La Paz',            capital: 'La Paz' },
+  { id: 'hn-d-valle',             countryId: 'hn', regionId: 'hn-r-sur',           name: 'Valle',             capital: 'Nacaome' },
+  { id: 'hn-d-choluteca',         countryId: 'hn', regionId: 'hn-r-sur',           name: 'Choluteca',         capital: 'Choluteca' },
+  { id: 'hn-d-el-paraiso',        countryId: 'hn', regionId: 'hn-r-oriental',      name: 'El Paraíso',        capital: 'Yuscarán' },
+  { id: 'hn-d-islas-bahia',       countryId: 'hn', regionId: 'hn-r-insular',       name: 'Islas de la Bahía', capital: 'Roatán' },
+
+  // ── NICARAGUA ──
+  { id: 'ni-d-managua',        countryId: 'ni', regionId: 'ni-r-pacifico', name: 'Managua',        capital: 'Managua' },
+  { id: 'ni-d-leon',           countryId: 'ni', regionId: 'ni-r-pacifico', name: 'León',           capital: 'León' },
+  { id: 'ni-d-chinandega',     countryId: 'ni', regionId: 'ni-r-pacifico', name: 'Chinandega',     capital: 'Chinandega' },
+  { id: 'ni-d-masaya',         countryId: 'ni', regionId: 'ni-r-pacifico', name: 'Masaya',         capital: 'Masaya' },
+  { id: 'ni-d-granada',        countryId: 'ni', regionId: 'ni-r-pacifico', name: 'Granada',        capital: 'Granada' },
+  { id: 'ni-d-carazo',         countryId: 'ni', regionId: 'ni-r-pacifico', name: 'Carazo',         capital: 'Jinotepe' },
+  { id: 'ni-d-rivas',          countryId: 'ni', regionId: 'ni-r-pacifico', name: 'Rivas',          capital: 'Rivas' },
+  { id: 'ni-d-esteli',         countryId: 'ni', regionId: 'ni-r-central',  name: 'Estelí',         capital: 'Estelí' },
+  { id: 'ni-d-madriz',         countryId: 'ni', regionId: 'ni-r-central',  name: 'Madriz',         capital: 'Somoto' },
+  { id: 'ni-d-nueva-segovia',  countryId: 'ni', regionId: 'ni-r-central',  name: 'Nueva Segovia',  capital: 'Ocotal' },
+  { id: 'ni-d-boaco',          countryId: 'ni', regionId: 'ni-r-central',  name: 'Boaco',          capital: 'Boaco' },
+  { id: 'ni-d-chontales',      countryId: 'ni', regionId: 'ni-r-central',  name: 'Chontales',      capital: 'Juigalpa' },
+  { id: 'ni-d-matagalpa',      countryId: 'ni', regionId: 'ni-r-central',  name: 'Matagalpa',      capital: 'Matagalpa' },
+  { id: 'ni-d-jinotega',       countryId: 'ni', regionId: 'ni-r-central',  name: 'Jinotega',       capital: 'Jinotega' },
+  { id: 'ni-d-raccn',          countryId: 'ni', regionId: 'ni-r-caribe',   name: 'RACCN',          capital: 'Bilwi' },
+  { id: 'ni-d-raccs',          countryId: 'ni', regionId: 'ni-r-caribe',   name: 'RACCS',          capital: 'Bluefields' },
+  { id: 'ni-d-rio-san-juan',   countryId: 'ni', regionId: 'ni-r-caribe',   name: 'Río San Juan',   capital: 'San Carlos' },
+
+  // ── COSTA RICA ──
+  { id: 'cr-d-san-jose',   countryId: 'cr', regionId: 'cr-r-central',  name: 'San José',   capital: 'San José' },
+  { id: 'cr-d-alajuela',   countryId: 'cr', regionId: 'cr-r-central',  name: 'Alajuela',   capital: 'Alajuela' },
+  { id: 'cr-d-cartago',    countryId: 'cr', regionId: 'cr-r-central',  name: 'Cartago',    capital: 'Cartago' },
+  { id: 'cr-d-heredia',    countryId: 'cr', regionId: 'cr-r-central',  name: 'Heredia',    capital: 'Heredia' },
+  { id: 'cr-d-puntarenas', countryId: 'cr', regionId: 'cr-r-pacifico', name: 'Puntarenas', capital: 'Puntarenas' },
+  { id: 'cr-d-guanacaste', countryId: 'cr', regionId: 'cr-r-pacifico', name: 'Guanacaste', capital: 'Liberia' },
+  { id: 'cr-d-limon',      countryId: 'cr', regionId: 'cr-r-caribe',   name: 'Limón',      capital: 'Limón' },
+
+  // ── COLOMBIA ──
+  { id: 'co-d-antioquia',          countryId: 'co', regionId: 'co-r-andina',    name: 'Antioquia',          capital: 'Medellín' },
+  { id: 'co-d-boyaca',             countryId: 'co', regionId: 'co-r-andina',    name: 'Boyacá',             capital: 'Tunja' },
+  { id: 'co-d-caldas',             countryId: 'co', regionId: 'co-r-andina',    name: 'Caldas',             capital: 'Manizales' },
+  { id: 'co-d-cundinamarca',       countryId: 'co', regionId: 'co-r-andina',    name: 'Cundinamarca',       capital: 'Bogotá' },
+  { id: 'co-d-bogota',             countryId: 'co', regionId: 'co-r-andina',    name: 'Bogotá D.C.',        capital: 'Bogotá' },
+  { id: 'co-d-huila',              countryId: 'co', regionId: 'co-r-andina',    name: 'Huila',              capital: 'Neiva' },
+  { id: 'co-d-norte-santander',    countryId: 'co', regionId: 'co-r-andina',    name: 'Norte de Santander', capital: 'Cúcuta' },
+  { id: 'co-d-quindio',            countryId: 'co', regionId: 'co-r-andina',    name: 'Quindío',            capital: 'Armenia' },
+  { id: 'co-d-risaralda',          countryId: 'co', regionId: 'co-r-andina',    name: 'Risaralda',          capital: 'Pereira' },
+  { id: 'co-d-santander',          countryId: 'co', regionId: 'co-r-andina',    name: 'Santander',          capital: 'Bucaramanga' },
+  { id: 'co-d-tolima',             countryId: 'co', regionId: 'co-r-andina',    name: 'Tolima',             capital: 'Ibagué' },
+  { id: 'co-d-atlantico',          countryId: 'co', regionId: 'co-r-caribe',    name: 'Atlántico',          capital: 'Barranquilla' },
+  { id: 'co-d-bolivar',            countryId: 'co', regionId: 'co-r-caribe',    name: 'Bolívar',            capital: 'Cartagena' },
+  { id: 'co-d-cesar',              countryId: 'co', regionId: 'co-r-caribe',    name: 'Cesar',              capital: 'Valledupar' },
+  { id: 'co-d-cordoba',            countryId: 'co', regionId: 'co-r-caribe',    name: 'Córdoba',            capital: 'Montería' },
+  { id: 'co-d-la-guajira',         countryId: 'co', regionId: 'co-r-caribe',    name: 'La Guajira',         capital: 'Riohacha' },
+  { id: 'co-d-magdalena',          countryId: 'co', regionId: 'co-r-caribe',    name: 'Magdalena',          capital: 'Santa Marta' },
+  { id: 'co-d-sucre',              countryId: 'co', regionId: 'co-r-caribe',    name: 'Sucre',              capital: 'Sincelejo' },
+  { id: 'co-d-san-andres',         countryId: 'co', regionId: 'co-r-caribe',    name: 'San Andrés y Providencia', capital: 'San Andrés' },
+  { id: 'co-d-cauca',              countryId: 'co', regionId: 'co-r-pacifica',  name: 'Cauca',              capital: 'Popayán' },
+  { id: 'co-d-choco',              countryId: 'co', regionId: 'co-r-pacifica',  name: 'Chocó',              capital: 'Quibdó' },
+  { id: 'co-d-narino',             countryId: 'co', regionId: 'co-r-pacifica',  name: 'Nariño',             capital: 'Pasto' },
+  { id: 'co-d-valle-del-cauca',    countryId: 'co', regionId: 'co-r-pacifica',  name: 'Valle del Cauca',    capital: 'Cali' },
+  { id: 'co-d-arauca',             countryId: 'co', regionId: 'co-r-orinoquia', name: 'Arauca',             capital: 'Arauca' },
+  { id: 'co-d-casanare',           countryId: 'co', regionId: 'co-r-orinoquia', name: 'Casanare',           capital: 'Yopal' },
+  { id: 'co-d-meta',               countryId: 'co', regionId: 'co-r-orinoquia', name: 'Meta',               capital: 'Villavicencio' },
+  { id: 'co-d-vichada',            countryId: 'co', regionId: 'co-r-orinoquia', name: 'Vichada',            capital: 'Puerto Carreño' },
+  { id: 'co-d-amazonas',           countryId: 'co', regionId: 'co-r-amazonia',  name: 'Amazonas',           capital: 'Leticia' },
+  { id: 'co-d-caqueta',            countryId: 'co', regionId: 'co-r-amazonia',  name: 'Caquetá',            capital: 'Florencia' },
+  { id: 'co-d-guainia',            countryId: 'co', regionId: 'co-r-amazonia',  name: 'Guainía',            capital: 'Inírida' },
+  { id: 'co-d-guaviare',           countryId: 'co', regionId: 'co-r-amazonia',  name: 'Guaviare',           capital: 'San José del Guaviare' },
+  { id: 'co-d-putumayo',           countryId: 'co', regionId: 'co-r-amazonia',  name: 'Putumayo',           capital: 'Mocoa' },
+  { id: 'co-d-vaupes',             countryId: 'co', regionId: 'co-r-amazonia',  name: 'Vaupés',             capital: 'Mitú' },
+
+  // ── VENEZUELA ──
+  { id: 've-d-distrito-capital', countryId: 've', regionId: 've-r-capital',         name: 'Distrito Capital', capital: 'Caracas' },
+  { id: 've-d-miranda',          countryId: 've', regionId: 've-r-capital',         name: 'Miranda',          capital: 'Los Teques' },
+  { id: 've-d-la-guaira',        countryId: 've', regionId: 've-r-capital',         name: 'La Guaira',        capital: 'La Guaira' },
+  { id: 've-d-aragua',           countryId: 've', regionId: 've-r-central',         name: 'Aragua',           capital: 'Maracay' },
+  { id: 've-d-carabobo',         countryId: 've', regionId: 've-r-central',         name: 'Carabobo',         capital: 'Valencia' },
+  { id: 've-d-guarico',          countryId: 've', regionId: 've-r-llanos',          name: 'Guárico',          capital: 'San Juan de los Morros' },
+  { id: 've-d-apure',            countryId: 've', regionId: 've-r-llanos',          name: 'Apure',            capital: 'San Fernando de Apure' },
+  { id: 've-d-cojedes',          countryId: 've', regionId: 've-r-llanos',          name: 'Cojedes',          capital: 'San Carlos' },
+  { id: 've-d-portuguesa',       countryId: 've', regionId: 've-r-llanos',          name: 'Portuguesa',       capital: 'Guanare' },
+  { id: 've-d-lara',             countryId: 've', regionId: 've-r-centroccidental', name: 'Lara',             capital: 'Barquisimeto' },
+  { id: 've-d-falcon',           countryId: 've', regionId: 've-r-centroccidental', name: 'Falcón',           capital: 'Coro' },
+  { id: 've-d-yaracuy',          countryId: 've', regionId: 've-r-centroccidental', name: 'Yaracuy',          capital: 'San Felipe' },
+  { id: 've-d-zulia',            countryId: 've', regionId: 've-r-zuliana',         name: 'Zulia',            capital: 'Maracaibo' },
+  { id: 've-d-merida',           countryId: 've', regionId: 've-r-andes',           name: 'Mérida',           capital: 'Mérida' },
+  { id: 've-d-tachira',          countryId: 've', regionId: 've-r-andes',           name: 'Táchira',          capital: 'San Cristóbal' },
+  { id: 've-d-trujillo',         countryId: 've', regionId: 've-r-andes',           name: 'Trujillo',         capital: 'Trujillo' },
+  { id: 've-d-barinas',          countryId: 've', regionId: 've-r-andes',           name: 'Barinas',          capital: 'Barinas' },
+  { id: 've-d-anzoategui',       countryId: 've', regionId: 've-r-nororiental',     name: 'Anzoátegui',       capital: 'Barcelona' },
+  { id: 've-d-monagas',          countryId: 've', regionId: 've-r-nororiental',     name: 'Monagas',          capital: 'Maturín' },
+  { id: 've-d-sucre',            countryId: 've', regionId: 've-r-nororiental',     name: 'Sucre',            capital: 'Cumaná' },
+  { id: 've-d-nueva-esparta',    countryId: 've', regionId: 've-r-nororiental',     name: 'Nueva Esparta',    capital: 'La Asunción' },
+  { id: 've-d-bolivar',          countryId: 've', regionId: 've-r-guayana',         name: 'Bolívar',          capital: 'Ciudad Bolívar' },
+  { id: 've-d-amazonas',         countryId: 've', regionId: 've-r-guayana',         name: 'Amazonas',         capital: 'Puerto Ayacucho' },
+  { id: 've-d-delta-amacuro',    countryId: 've', regionId: 've-r-guayana',         name: 'Delta Amacuro',    capital: 'Tucupita' },
+
+  // ── ESPAÑA (50 provincias + Ceuta + Melilla) ──
+  { id: 'es-d-a-coruna',    countryId: 'es', regionId: 'es-r-noroeste', name: 'A Coruña',   capital: 'A Coruña' },
+  { id: 'es-d-lugo',        countryId: 'es', regionId: 'es-r-noroeste', name: 'Lugo',       capital: 'Lugo' },
+  { id: 'es-d-ourense',     countryId: 'es', regionId: 'es-r-noroeste', name: 'Ourense',    capital: 'Ourense' },
+  { id: 'es-d-pontevedra',  countryId: 'es', regionId: 'es-r-noroeste', name: 'Pontevedra', capital: 'Pontevedra' },
+  { id: 'es-d-asturias',    countryId: 'es', regionId: 'es-r-noroeste', name: 'Asturias',   capital: 'Oviedo' },
+  { id: 'es-d-cantabria',   countryId: 'es', regionId: 'es-r-noroeste', name: 'Cantabria',  capital: 'Santander' },
+  { id: 'es-d-vizcaya',     countryId: 'es', regionId: 'es-r-norte',    name: 'Vizcaya',    capital: 'Bilbao' },
+  { id: 'es-d-guipuzcoa',   countryId: 'es', regionId: 'es-r-norte',    name: 'Guipúzcoa',  capital: 'San Sebastián' },
+  { id: 'es-d-alava',       countryId: 'es', regionId: 'es-r-norte',    name: 'Álava',      capital: 'Vitoria-Gasteiz' },
+  { id: 'es-d-navarra',     countryId: 'es', regionId: 'es-r-norte',    name: 'Navarra',    capital: 'Pamplona' },
+  { id: 'es-d-la-rioja',    countryId: 'es', regionId: 'es-r-norte',    name: 'La Rioja',   capital: 'Logroño' },
+  { id: 'es-d-huesca',      countryId: 'es', regionId: 'es-r-nordeste', name: 'Huesca',     capital: 'Huesca' },
+  { id: 'es-d-zaragoza',    countryId: 'es', regionId: 'es-r-nordeste', name: 'Zaragoza',   capital: 'Zaragoza' },
+  { id: 'es-d-teruel',      countryId: 'es', regionId: 'es-r-nordeste', name: 'Teruel',     capital: 'Teruel' },
+  { id: 'es-d-barcelona',   countryId: 'es', regionId: 'es-r-nordeste', name: 'Barcelona',  capital: 'Barcelona' },
+  { id: 'es-d-girona',      countryId: 'es', regionId: 'es-r-nordeste', name: 'Girona',     capital: 'Girona' },
+  { id: 'es-d-lleida',      countryId: 'es', regionId: 'es-r-nordeste', name: 'Lleida',     capital: 'Lleida' },
+  { id: 'es-d-tarragona',   countryId: 'es', regionId: 'es-r-nordeste', name: 'Tarragona',  capital: 'Tarragona' },
+  { id: 'es-d-madrid',      countryId: 'es', regionId: 'es-r-centro',   name: 'Madrid',     capital: 'Madrid' },
+  { id: 'es-d-avila',       countryId: 'es', regionId: 'es-r-centro',   name: 'Ávila',      capital: 'Ávila' },
+  { id: 'es-d-burgos',      countryId: 'es', regionId: 'es-r-centro',   name: 'Burgos',     capital: 'Burgos' },
+  { id: 'es-d-leon',        countryId: 'es', regionId: 'es-r-centro',   name: 'León',       capital: 'León' },
+  { id: 'es-d-palencia',    countryId: 'es', regionId: 'es-r-centro',   name: 'Palencia',   capital: 'Palencia' },
+  { id: 'es-d-salamanca',   countryId: 'es', regionId: 'es-r-centro',   name: 'Salamanca',  capital: 'Salamanca' },
+  { id: 'es-d-segovia',     countryId: 'es', regionId: 'es-r-centro',   name: 'Segovia',    capital: 'Segovia' },
+  { id: 'es-d-soria',       countryId: 'es', regionId: 'es-r-centro',   name: 'Soria',      capital: 'Soria' },
+  { id: 'es-d-valladolid',  countryId: 'es', regionId: 'es-r-centro',   name: 'Valladolid', capital: 'Valladolid' },
+  { id: 'es-d-zamora',      countryId: 'es', regionId: 'es-r-centro',   name: 'Zamora',     capital: 'Zamora' },
+  { id: 'es-d-albacete',    countryId: 'es', regionId: 'es-r-centro',   name: 'Albacete',   capital: 'Albacete' },
+  { id: 'es-d-ciudad-real', countryId: 'es', regionId: 'es-r-centro',   name: 'Ciudad Real',capital: 'Ciudad Real' },
+  { id: 'es-d-cuenca',      countryId: 'es', regionId: 'es-r-centro',   name: 'Cuenca',     capital: 'Cuenca' },
+  { id: 'es-d-guadalajara', countryId: 'es', regionId: 'es-r-centro',   name: 'Guadalajara',capital: 'Guadalajara' },
+  { id: 'es-d-toledo',      countryId: 'es', regionId: 'es-r-centro',   name: 'Toledo',     capital: 'Toledo' },
+  { id: 'es-d-badajoz',     countryId: 'es', regionId: 'es-r-centro',   name: 'Badajoz',    capital: 'Badajoz' },
+  { id: 'es-d-caceres',     countryId: 'es', regionId: 'es-r-centro',   name: 'Cáceres',    capital: 'Cáceres' },
+  { id: 'es-d-valencia',    countryId: 'es', regionId: 'es-r-este',     name: 'Valencia',   capital: 'Valencia' },
+  { id: 'es-d-alicante',    countryId: 'es', regionId: 'es-r-este',     name: 'Alicante',   capital: 'Alicante' },
+  { id: 'es-d-castellon',   countryId: 'es', regionId: 'es-r-este',     name: 'Castellón',  capital: 'Castellón de la Plana' },
+  { id: 'es-d-baleares',    countryId: 'es', regionId: 'es-r-este',     name: 'Baleares',   capital: 'Palma' },
+  { id: 'es-d-murcia',      countryId: 'es', regionId: 'es-r-este',     name: 'Murcia',     capital: 'Murcia' },
+  { id: 'es-d-almeria',     countryId: 'es', regionId: 'es-r-sur',      name: 'Almería',    capital: 'Almería' },
+  { id: 'es-d-cadiz',       countryId: 'es', regionId: 'es-r-sur',      name: 'Cádiz',      capital: 'Cádiz' },
+  { id: 'es-d-cordoba',     countryId: 'es', regionId: 'es-r-sur',      name: 'Córdoba',    capital: 'Córdoba' },
+  { id: 'es-d-granada',     countryId: 'es', regionId: 'es-r-sur',      name: 'Granada',    capital: 'Granada' },
+  { id: 'es-d-huelva',      countryId: 'es', regionId: 'es-r-sur',      name: 'Huelva',     capital: 'Huelva' },
+  { id: 'es-d-jaen',        countryId: 'es', regionId: 'es-r-sur',      name: 'Jaén',       capital: 'Jaén' },
+  { id: 'es-d-malaga',      countryId: 'es', regionId: 'es-r-sur',      name: 'Málaga',     capital: 'Málaga' },
+  { id: 'es-d-sevilla',     countryId: 'es', regionId: 'es-r-sur',      name: 'Sevilla',    capital: 'Sevilla' },
+  { id: 'es-d-ceuta',       countryId: 'es', regionId: 'es-r-sur',      name: 'Ceuta',      capital: 'Ceuta' },
+  { id: 'es-d-melilla',     countryId: 'es', regionId: 'es-r-sur',      name: 'Melilla',    capital: 'Melilla' },
+  { id: 'es-d-las-palmas',  countryId: 'es', regionId: 'es-r-canarias', name: 'Las Palmas', capital: 'Las Palmas de Gran Canaria' },
+  { id: 'es-d-sc-tenerife', countryId: 'es', regionId: 'es-r-canarias', name: 'Santa Cruz de Tenerife', capital: 'Santa Cruz de Tenerife' },
+
+  // ── PORTUGAL ──
+  { id: 'pt-d-viana-do-castelo', countryId: 'pt', regionId: 'pt-r-norte',    name: 'Viana do Castelo', capital: 'Viana do Castelo' },
+  { id: 'pt-d-braga',            countryId: 'pt', regionId: 'pt-r-norte',    name: 'Braga',            capital: 'Braga' },
+  { id: 'pt-d-porto',            countryId: 'pt', regionId: 'pt-r-norte',    name: 'Porto',            capital: 'Porto' },
+  { id: 'pt-d-vila-real',        countryId: 'pt', regionId: 'pt-r-norte',    name: 'Vila Real',        capital: 'Vila Real' },
+  { id: 'pt-d-braganca',         countryId: 'pt', regionId: 'pt-r-norte',    name: 'Bragança',         capital: 'Bragança' },
+  { id: 'pt-d-aveiro',           countryId: 'pt', regionId: 'pt-r-centro',   name: 'Aveiro',           capital: 'Aveiro' },
+  { id: 'pt-d-coimbra',          countryId: 'pt', regionId: 'pt-r-centro',   name: 'Coimbra',          capital: 'Coimbra' },
+  { id: 'pt-d-leiria',           countryId: 'pt', regionId: 'pt-r-centro',   name: 'Leiria',           capital: 'Leiria' },
+  { id: 'pt-d-viseu',            countryId: 'pt', regionId: 'pt-r-centro',   name: 'Viseu',            capital: 'Viseu' },
+  { id: 'pt-d-guarda',           countryId: 'pt', regionId: 'pt-r-centro',   name: 'Guarda',           capital: 'Guarda' },
+  { id: 'pt-d-castelo-branco',   countryId: 'pt', regionId: 'pt-r-centro',   name: 'Castelo Branco',   capital: 'Castelo Branco' },
+  { id: 'pt-d-lisboa',           countryId: 'pt', regionId: 'pt-r-lisboa',   name: 'Lisboa',           capital: 'Lisboa' },
+  { id: 'pt-d-setubal',          countryId: 'pt', regionId: 'pt-r-lisboa',   name: 'Setúbal',          capital: 'Setúbal' },
+  { id: 'pt-d-portalegre',       countryId: 'pt', regionId: 'pt-r-alentejo', name: 'Portalegre',       capital: 'Portalegre' },
+  { id: 'pt-d-evora',            countryId: 'pt', regionId: 'pt-r-alentejo', name: 'Évora',            capital: 'Évora' },
+  { id: 'pt-d-beja',             countryId: 'pt', regionId: 'pt-r-alentejo', name: 'Beja',             capital: 'Beja' },
+  { id: 'pt-d-faro',             countryId: 'pt', regionId: 'pt-r-algarve',  name: 'Faro',             capital: 'Faro' },
+  { id: 'pt-d-acores',           countryId: 'pt', regionId: 'pt-r-acores',   name: 'Açores',           capital: 'Ponta Delgada' },
+  { id: 'pt-d-madeira',          countryId: 'pt', regionId: 'pt-r-madeira',  name: 'Madeira',          capital: 'Funchal' },
+];
+
+// ─── MUNICIPIOS (capital + main cities per department) ──────────────────────
+// Note: representative set for UI design. Full catalog to be imported from
+// official sources (INE, DANE, INE Guatemala, etc.) into Supabase.
+export const municipios: Municipio[] = [
+  // Guatemala
+  { id: 'gt-m-guatemala',          departmentId: 'gt-d-guatemala', name: 'Guatemala', isCapital: true },
+  { id: 'gt-m-mixco',              departmentId: 'gt-d-guatemala', name: 'Mixco' },
+  { id: 'gt-m-villa-nueva',        departmentId: 'gt-d-guatemala', name: 'Villa Nueva' },
+  { id: 'gt-m-san-miguel-petapa',  departmentId: 'gt-d-guatemala', name: 'San Miguel Petapa' },
+  { id: 'gt-m-amatitlan',          departmentId: 'gt-d-guatemala', name: 'Amatitlán' },
+  { id: 'gt-m-coban',              departmentId: 'gt-d-alta-verapaz', name: 'Cobán', isCapital: true },
+  { id: 'gt-m-san-pedro-carcha',   departmentId: 'gt-d-alta-verapaz', name: 'San Pedro Carchá' },
+  { id: 'gt-m-chisec',             departmentId: 'gt-d-alta-verapaz', name: 'Chisec' },
+  { id: 'gt-m-salama',             departmentId: 'gt-d-baja-verapaz', name: 'Salamá', isCapital: true },
+  { id: 'gt-m-rabinal',            departmentId: 'gt-d-baja-verapaz', name: 'Rabinal' },
+  { id: 'gt-m-guastatoya',         departmentId: 'gt-d-el-progreso', name: 'Guastatoya', isCapital: true },
+  { id: 'gt-m-sanarate',           departmentId: 'gt-d-el-progreso', name: 'Sanarate' },
+  { id: 'gt-m-puerto-barrios',     departmentId: 'gt-d-izabal', name: 'Puerto Barrios', isCapital: true },
+  { id: 'gt-m-morales',            departmentId: 'gt-d-izabal', name: 'Morales' },
+  { id: 'gt-m-livingston',         departmentId: 'gt-d-izabal', name: 'Livingston' },
+  { id: 'gt-m-zacapa',             departmentId: 'gt-d-zacapa', name: 'Zacapa', isCapital: true },
+  { id: 'gt-m-gualan',             departmentId: 'gt-d-zacapa', name: 'Gualán' },
+  { id: 'gt-m-chiquimula',         departmentId: 'gt-d-chiquimula', name: 'Chiquimula', isCapital: true },
+  { id: 'gt-m-esquipulas',         departmentId: 'gt-d-chiquimula', name: 'Esquipulas' },
+  { id: 'gt-m-cuilapa',            departmentId: 'gt-d-santa-rosa', name: 'Cuilapa', isCapital: true },
+  { id: 'gt-m-barberena',          departmentId: 'gt-d-santa-rosa', name: 'Barberena' },
+  { id: 'gt-m-jalapa',             departmentId: 'gt-d-jalapa', name: 'Jalapa', isCapital: true },
+  { id: 'gt-m-jutiapa',            departmentId: 'gt-d-jutiapa', name: 'Jutiapa', isCapital: true },
+  { id: 'gt-m-asuncion-mita',      departmentId: 'gt-d-jutiapa', name: 'Asunción Mita' },
+  { id: 'gt-m-antigua-guatemala',  departmentId: 'gt-d-sacatepequez', name: 'Antigua Guatemala', isCapital: true },
+  { id: 'gt-m-ciudad-vieja',       departmentId: 'gt-d-sacatepequez', name: 'Ciudad Vieja' },
+  { id: 'gt-m-chimaltenango',      departmentId: 'gt-d-chimaltenango', name: 'Chimaltenango', isCapital: true },
+  { id: 'gt-m-tecpan-guatemala',   departmentId: 'gt-d-chimaltenango', name: 'Tecpán Guatemala' },
+  { id: 'gt-m-escuintla',          departmentId: 'gt-d-escuintla', name: 'Escuintla', isCapital: true },
+  { id: 'gt-m-santa-lucia-cotz',   departmentId: 'gt-d-escuintla', name: 'Santa Lucía Cotzumalguapa' },
+  { id: 'gt-m-puerto-san-jose',    departmentId: 'gt-d-escuintla', name: 'Puerto San José' },
+  { id: 'gt-m-solola',             departmentId: 'gt-d-solola', name: 'Sololá', isCapital: true },
+  { id: 'gt-m-panajachel',         departmentId: 'gt-d-solola', name: 'Panajachel' },
+  { id: 'gt-m-santiago-atitlan',   departmentId: 'gt-d-solola', name: 'Santiago Atitlán' },
+  { id: 'gt-m-totonicapan',        departmentId: 'gt-d-totonicapan', name: 'Totonicapán', isCapital: true },
+  { id: 'gt-m-momostenango',       departmentId: 'gt-d-totonicapan', name: 'Momostenango' },
+  { id: 'gt-m-quetzaltenango',     departmentId: 'gt-d-quetzaltenango', name: 'Quetzaltenango', isCapital: true },
+  { id: 'gt-m-coatepeque',         departmentId: 'gt-d-quetzaltenango', name: 'Coatepeque' },
+  { id: 'gt-m-mazatenango',        departmentId: 'gt-d-suchitepequez', name: 'Mazatenango', isCapital: true },
+  { id: 'gt-m-retalhuleu',         departmentId: 'gt-d-retalhuleu', name: 'Retalhuleu', isCapital: true },
+  { id: 'gt-m-champerico',         departmentId: 'gt-d-retalhuleu', name: 'Champerico' },
+  { id: 'gt-m-san-marcos',         departmentId: 'gt-d-san-marcos', name: 'San Marcos', isCapital: true },
+  { id: 'gt-m-malacatan',          departmentId: 'gt-d-san-marcos', name: 'Malacatán' },
+  { id: 'gt-m-huehuetenango',      departmentId: 'gt-d-huehuetenango', name: 'Huehuetenango', isCapital: true },
+  { id: 'gt-m-chiantla',           departmentId: 'gt-d-huehuetenango', name: 'Chiantla' },
+  { id: 'gt-m-santa-cruz-quiche',  departmentId: 'gt-d-quiche', name: 'Santa Cruz del Quiché', isCapital: true },
+  { id: 'gt-m-chichicastenango',   departmentId: 'gt-d-quiche', name: 'Chichicastenango' },
+  { id: 'gt-m-nebaj',              departmentId: 'gt-d-quiche', name: 'Nebaj' },
+  { id: 'gt-m-flores',             departmentId: 'gt-d-peten', name: 'Flores', isCapital: true },
+  { id: 'gt-m-san-benito',         departmentId: 'gt-d-peten', name: 'San Benito' },
+  { id: 'gt-m-poptun',             departmentId: 'gt-d-peten', name: 'Poptún' },
+  { id: 'gt-m-melchor-de-mencos',  departmentId: 'gt-d-peten', name: 'Melchor de Mencos' },
+
+  // El Salvador
+  { id: 'sv-m-ahuachapan',     departmentId: 'sv-d-ahuachapan', name: 'Ahuachapán', isCapital: true },
+  { id: 'sv-m-atiquizaya',     departmentId: 'sv-d-ahuachapan', name: 'Atiquizaya' },
+  { id: 'sv-m-tacuba',         departmentId: 'sv-d-ahuachapan', name: 'Tacuba' },
+  { id: 'sv-m-santa-ana',      departmentId: 'sv-d-santa-ana', name: 'Santa Ana', isCapital: true },
+  { id: 'sv-m-metapan',        departmentId: 'sv-d-santa-ana', name: 'Metapán' },
+  { id: 'sv-m-chalchuapa',     departmentId: 'sv-d-santa-ana', name: 'Chalchuapa' },
+  { id: 'sv-m-sonsonate',      departmentId: 'sv-d-sonsonate', name: 'Sonsonate', isCapital: true },
+  { id: 'sv-m-izalco',         departmentId: 'sv-d-sonsonate', name: 'Izalco' },
+  { id: 'sv-m-acajutla',       departmentId: 'sv-d-sonsonate', name: 'Acajutla' },
+  { id: 'sv-m-santa-tecla',    departmentId: 'sv-d-la-libertad', name: 'Santa Tecla', isCapital: true },
+  { id: 'sv-m-antiguo-cuscatlan', departmentId: 'sv-d-la-libertad', name: 'Antiguo Cuscatlán' },
+  { id: 'sv-m-colon',          departmentId: 'sv-d-la-libertad', name: 'Colón' },
+  { id: 'sv-m-chalatenango',   departmentId: 'sv-d-chalatenango', name: 'Chalatenango', isCapital: true },
+  { id: 'sv-m-la-palma',       departmentId: 'sv-d-chalatenango', name: 'La Palma' },
+  { id: 'sv-m-cojutepeque',    departmentId: 'sv-d-cuscatlan', name: 'Cojutepeque', isCapital: true },
+  { id: 'sv-m-suchitoto',      departmentId: 'sv-d-cuscatlan', name: 'Suchitoto' },
+  { id: 'sv-m-san-salvador',   departmentId: 'sv-d-san-salvador', name: 'San Salvador', isCapital: true },
+  { id: 'sv-m-soyapango',      departmentId: 'sv-d-san-salvador', name: 'Soyapango' },
+  { id: 'sv-m-mejicanos',      departmentId: 'sv-d-san-salvador', name: 'Mejicanos' },
+  { id: 'sv-m-apopa',          departmentId: 'sv-d-san-salvador', name: 'Apopa' },
+  { id: 'sv-m-ilopango',       departmentId: 'sv-d-san-salvador', name: 'Ilopango' },
+  { id: 'sv-m-zacatecoluca',   departmentId: 'sv-d-la-paz', name: 'Zacatecoluca', isCapital: true },
+  { id: 'sv-m-olocuilta',      departmentId: 'sv-d-la-paz', name: 'Olocuilta' },
+  { id: 'sv-m-sensuntepeque',  departmentId: 'sv-d-cabanas', name: 'Sensuntepeque', isCapital: true },
+  { id: 'sv-m-ilobasco',       departmentId: 'sv-d-cabanas', name: 'Ilobasco' },
+  { id: 'sv-m-san-vicente',    departmentId: 'sv-d-san-vicente', name: 'San Vicente', isCapital: true },
+  { id: 'sv-m-apastepeque',    departmentId: 'sv-d-san-vicente', name: 'Apastepeque' },
+  { id: 'sv-m-usulutan',       departmentId: 'sv-d-usulutan', name: 'Usulután', isCapital: true },
+  { id: 'sv-m-jiquilisco',     departmentId: 'sv-d-usulutan', name: 'Jiquilisco' },
+  { id: 'sv-m-san-miguel',     departmentId: 'sv-d-san-miguel', name: 'San Miguel', isCapital: true },
+  { id: 'sv-m-chinameca',      departmentId: 'sv-d-san-miguel', name: 'Chinameca' },
+  { id: 'sv-m-san-francisco-gotera', departmentId: 'sv-d-morazan', name: 'San Francisco Gotera', isCapital: true },
+  { id: 'sv-m-corinto',        departmentId: 'sv-d-morazan', name: 'Corinto' },
+  { id: 'sv-m-la-union',       departmentId: 'sv-d-la-union', name: 'La Unión', isCapital: true },
+  { id: 'sv-m-santa-rosa-lima',departmentId: 'sv-d-la-union', name: 'Santa Rosa de Lima' },
+
+  // Honduras
+  { id: 'hn-m-san-pedro-sula', departmentId: 'hn-d-cortes', name: 'San Pedro Sula', isCapital: true },
+  { id: 'hn-m-choloma',        departmentId: 'hn-d-cortes', name: 'Choloma' },
+  { id: 'hn-m-puerto-cortes',  departmentId: 'hn-d-cortes', name: 'Puerto Cortés' },
+  { id: 'hn-m-villanueva',     departmentId: 'hn-d-cortes', name: 'Villanueva' },
+  { id: 'hn-m-la-lima',        departmentId: 'hn-d-cortes', name: 'La Lima' },
+  { id: 'hn-m-santa-barbara',  departmentId: 'hn-d-santa-barbara', name: 'Santa Bárbara', isCapital: true },
+  { id: 'hn-m-trinidad',       departmentId: 'hn-d-santa-barbara', name: 'Trinidad' },
+  { id: 'hn-m-santa-rosa-copan', departmentId: 'hn-d-copan', name: 'Santa Rosa de Copán', isCapital: true },
+  { id: 'hn-m-copan-ruinas',   departmentId: 'hn-d-copan', name: 'Copán Ruinas' },
+  { id: 'hn-m-ocotepeque',     departmentId: 'hn-d-ocotepeque', name: 'Ocotepeque', isCapital: true },
+  { id: 'hn-m-gracias',        departmentId: 'hn-d-lempira', name: 'Gracias', isCapital: true },
+  { id: 'hn-m-la-esperanza',   departmentId: 'hn-d-intibuca', name: 'La Esperanza', isCapital: true },
+  { id: 'hn-m-la-ceiba',       departmentId: 'hn-d-atlantida', name: 'La Ceiba', isCapital: true },
+  { id: 'hn-m-tela',           departmentId: 'hn-d-atlantida', name: 'Tela' },
+  { id: 'hn-m-yoro',           departmentId: 'hn-d-yoro', name: 'Yoro', isCapital: true },
+  { id: 'hn-m-el-progreso',    departmentId: 'hn-d-yoro', name: 'El Progreso' },
+  { id: 'hn-m-olanchito',      departmentId: 'hn-d-yoro', name: 'Olanchito' },
+  { id: 'hn-m-trujillo',       departmentId: 'hn-d-colon', name: 'Trujillo', isCapital: true },
+  { id: 'hn-m-tocoa',          departmentId: 'hn-d-colon', name: 'Tocoa' },
+  { id: 'hn-m-juticalpa',      departmentId: 'hn-d-olancho', name: 'Juticalpa', isCapital: true },
+  { id: 'hn-m-catacamas',      departmentId: 'hn-d-olancho', name: 'Catacamas' },
+  { id: 'hn-m-puerto-lempira', departmentId: 'hn-d-gracias-a-dios', name: 'Puerto Lempira', isCapital: true },
+  { id: 'hn-m-tegucigalpa',    departmentId: 'hn-d-francisco-morazan', name: 'Tegucigalpa', isCapital: true },
+  { id: 'hn-m-talanga',        departmentId: 'hn-d-francisco-morazan', name: 'Talanga' },
+  { id: 'hn-m-valle-de-angeles', departmentId: 'hn-d-francisco-morazan', name: 'Valle de Ángeles' },
+  { id: 'hn-m-comayagua',      departmentId: 'hn-d-comayagua', name: 'Comayagua', isCapital: true },
+  { id: 'hn-m-siguatepeque',   departmentId: 'hn-d-comayagua', name: 'Siguatepeque' },
+  { id: 'hn-m-la-paz-hn',      departmentId: 'hn-d-la-paz', name: 'La Paz', isCapital: true },
+  { id: 'hn-m-marcala',        departmentId: 'hn-d-la-paz', name: 'Marcala' },
+  { id: 'hn-m-nacaome',        departmentId: 'hn-d-valle', name: 'Nacaome', isCapital: true },
+  { id: 'hn-m-san-lorenzo',    departmentId: 'hn-d-valle', name: 'San Lorenzo' },
+  { id: 'hn-m-choluteca',      departmentId: 'hn-d-choluteca', name: 'Choluteca', isCapital: true },
+  { id: 'hn-m-pespire',        departmentId: 'hn-d-choluteca', name: 'Pespire' },
+  { id: 'hn-m-yuscaran',       departmentId: 'hn-d-el-paraiso', name: 'Yuscarán', isCapital: true },
+  { id: 'hn-m-danli',          departmentId: 'hn-d-el-paraiso', name: 'Danlí' },
+  { id: 'hn-m-roatan',         departmentId: 'hn-d-islas-bahia', name: 'Roatán', isCapital: true },
+  { id: 'hn-m-utila',          departmentId: 'hn-d-islas-bahia', name: 'Utila' },
+  { id: 'hn-m-guanaja',        departmentId: 'hn-d-islas-bahia', name: 'Guanaja' },
+
+  // Nicaragua
+  { id: 'ni-m-managua',        departmentId: 'ni-d-managua', name: 'Managua', isCapital: true },
+  { id: 'ni-m-tipitapa',       departmentId: 'ni-d-managua', name: 'Tipitapa' },
+  { id: 'ni-m-ciudad-sandino', departmentId: 'ni-d-managua', name: 'Ciudad Sandino' },
+  { id: 'ni-m-leon',           departmentId: 'ni-d-leon', name: 'León', isCapital: true },
+  { id: 'ni-m-nagarote',       departmentId: 'ni-d-leon', name: 'Nagarote' },
+  { id: 'ni-m-chinandega',     departmentId: 'ni-d-chinandega', name: 'Chinandega', isCapital: true },
+  { id: 'ni-m-corinto',        departmentId: 'ni-d-chinandega', name: 'Corinto' },
+  { id: 'ni-m-el-viejo',       departmentId: 'ni-d-chinandega', name: 'El Viejo' },
+  { id: 'ni-m-masaya',         departmentId: 'ni-d-masaya', name: 'Masaya', isCapital: true },
+  { id: 'ni-m-nindiri',        departmentId: 'ni-d-masaya', name: 'Nindirí' },
+  { id: 'ni-m-granada',        departmentId: 'ni-d-granada', name: 'Granada', isCapital: true },
+  { id: 'ni-m-nandaime',       departmentId: 'ni-d-granada', name: 'Nandaime' },
+  { id: 'ni-m-jinotepe',       departmentId: 'ni-d-carazo', name: 'Jinotepe', isCapital: true },
+  { id: 'ni-m-diriamba',       departmentId: 'ni-d-carazo', name: 'Diriamba' },
+  { id: 'ni-m-rivas',          departmentId: 'ni-d-rivas', name: 'Rivas', isCapital: true },
+  { id: 'ni-m-san-juan-del-sur', departmentId: 'ni-d-rivas', name: 'San Juan del Sur' },
+  { id: 'ni-m-esteli',         departmentId: 'ni-d-esteli', name: 'Estelí', isCapital: true },
+  { id: 'ni-m-condega',        departmentId: 'ni-d-esteli', name: 'Condega' },
+  { id: 'ni-m-somoto',         departmentId: 'ni-d-madriz', name: 'Somoto', isCapital: true },
+  { id: 'ni-m-ocotal',         departmentId: 'ni-d-nueva-segovia', name: 'Ocotal', isCapital: true },
+  { id: 'ni-m-jalapa',         departmentId: 'ni-d-nueva-segovia', name: 'Jalapa' },
+  { id: 'ni-m-boaco',          departmentId: 'ni-d-boaco', name: 'Boaco', isCapital: true },
+  { id: 'ni-m-camoapa',        departmentId: 'ni-d-boaco', name: 'Camoapa' },
+  { id: 'ni-m-juigalpa',       departmentId: 'ni-d-chontales', name: 'Juigalpa', isCapital: true },
+  { id: 'ni-m-santo-tomas',    departmentId: 'ni-d-chontales', name: 'Santo Tomás' },
+  { id: 'ni-m-matagalpa',      departmentId: 'ni-d-matagalpa', name: 'Matagalpa', isCapital: true },
+  { id: 'ni-m-sebaco',         departmentId: 'ni-d-matagalpa', name: 'Sébaco' },
+  { id: 'ni-m-jinotega',       departmentId: 'ni-d-jinotega', name: 'Jinotega', isCapital: true },
+  { id: 'ni-m-wiwili',         departmentId: 'ni-d-jinotega', name: 'Wiwilí' },
+  { id: 'ni-m-bilwi',          departmentId: 'ni-d-raccn', name: 'Bilwi (Puerto Cabezas)', isCapital: true },
+  { id: 'ni-m-waspam',         departmentId: 'ni-d-raccn', name: 'Waspam' },
+  { id: 'ni-m-siuna',          departmentId: 'ni-d-raccn', name: 'Siuna' },
+  { id: 'ni-m-bluefields',     departmentId: 'ni-d-raccs', name: 'Bluefields', isCapital: true },
+  { id: 'ni-m-corn-island',    departmentId: 'ni-d-raccs', name: 'Corn Island' },
+  { id: 'ni-m-el-rama',        departmentId: 'ni-d-raccs', name: 'El Rama' },
+  { id: 'ni-m-san-carlos',     departmentId: 'ni-d-rio-san-juan', name: 'San Carlos', isCapital: true },
+  { id: 'ni-m-el-castillo',    departmentId: 'ni-d-rio-san-juan', name: 'El Castillo' },
+
+  // Costa Rica
+  { id: 'cr-m-san-jose',       departmentId: 'cr-d-san-jose', name: 'San José', isCapital: true },
+  { id: 'cr-m-escazu',         departmentId: 'cr-d-san-jose', name: 'Escazú' },
+  { id: 'cr-m-desamparados',   departmentId: 'cr-d-san-jose', name: 'Desamparados' },
+  { id: 'cr-m-curridabat',     departmentId: 'cr-d-san-jose', name: 'Curridabat' },
+  { id: 'cr-m-perez-zeledon',  departmentId: 'cr-d-san-jose', name: 'Pérez Zeledón' },
+  { id: 'cr-m-alajuela',       departmentId: 'cr-d-alajuela', name: 'Alajuela', isCapital: true },
+  { id: 'cr-m-san-ramon',      departmentId: 'cr-d-alajuela', name: 'San Ramón' },
+  { id: 'cr-m-grecia',         departmentId: 'cr-d-alajuela', name: 'Grecia' },
+  { id: 'cr-m-san-carlos',     departmentId: 'cr-d-alajuela', name: 'San Carlos' },
+  { id: 'cr-m-cartago',        departmentId: 'cr-d-cartago', name: 'Cartago', isCapital: true },
+  { id: 'cr-m-paraiso',        departmentId: 'cr-d-cartago', name: 'Paraíso' },
+  { id: 'cr-m-turrialba',      departmentId: 'cr-d-cartago', name: 'Turrialba' },
+  { id: 'cr-m-heredia',        departmentId: 'cr-d-heredia', name: 'Heredia', isCapital: true },
+  { id: 'cr-m-barva',          departmentId: 'cr-d-heredia', name: 'Barva' },
+  { id: 'cr-m-santo-domingo',  departmentId: 'cr-d-heredia', name: 'Santo Domingo' },
+  { id: 'cr-m-puntarenas',     departmentId: 'cr-d-puntarenas', name: 'Puntarenas', isCapital: true },
+  { id: 'cr-m-esparza',        departmentId: 'cr-d-puntarenas', name: 'Esparza' },
+  { id: 'cr-m-quepos',         departmentId: 'cr-d-puntarenas', name: 'Quepos' },
+  { id: 'cr-m-liberia',        departmentId: 'cr-d-guanacaste', name: 'Liberia', isCapital: true },
+  { id: 'cr-m-nicoya',         departmentId: 'cr-d-guanacaste', name: 'Nicoya' },
+  { id: 'cr-m-santa-cruz',     departmentId: 'cr-d-guanacaste', name: 'Santa Cruz' },
+  { id: 'cr-m-limon',          departmentId: 'cr-d-limon', name: 'Limón', isCapital: true },
+  { id: 'cr-m-pococi',         departmentId: 'cr-d-limon', name: 'Pococí' },
+  { id: 'cr-m-siquirres',      departmentId: 'cr-d-limon', name: 'Siquirres' },
+  { id: 'cr-m-talamanca',      departmentId: 'cr-d-limon', name: 'Talamanca' },
+
+  // Colombia
+  { id: 'co-m-medellin',       departmentId: 'co-d-antioquia', name: 'Medellín', isCapital: true },
+  { id: 'co-m-bello',          departmentId: 'co-d-antioquia', name: 'Bello' },
+  { id: 'co-m-itagui',         departmentId: 'co-d-antioquia', name: 'Itagüí' },
+  { id: 'co-m-envigado',       departmentId: 'co-d-antioquia', name: 'Envigado' },
+  { id: 'co-m-rionegro',       departmentId: 'co-d-antioquia', name: 'Rionegro' },
+  { id: 'co-m-apartado',       departmentId: 'co-d-antioquia', name: 'Apartadó' },
+  { id: 'co-m-tunja',          departmentId: 'co-d-boyaca', name: 'Tunja', isCapital: true },
+  { id: 'co-m-duitama',        departmentId: 'co-d-boyaca', name: 'Duitama' },
+  { id: 'co-m-sogamoso',       departmentId: 'co-d-boyaca', name: 'Sogamoso' },
+  { id: 'co-m-manizales',      departmentId: 'co-d-caldas', name: 'Manizales', isCapital: true },
+  { id: 'co-m-la-dorada',      departmentId: 'co-d-caldas', name: 'La Dorada' },
+  { id: 'co-m-chinchina',      departmentId: 'co-d-caldas', name: 'Chinchiná' },
+  { id: 'co-m-soacha',         departmentId: 'co-d-cundinamarca', name: 'Soacha' },
+  { id: 'co-m-zipaquira',      departmentId: 'co-d-cundinamarca', name: 'Zipaquirá' },
+  { id: 'co-m-fusagasuga',     departmentId: 'co-d-cundinamarca', name: 'Fusagasugá' },
+  { id: 'co-m-chia',           departmentId: 'co-d-cundinamarca', name: 'Chía' },
+  { id: 'co-m-girardot',       departmentId: 'co-d-cundinamarca', name: 'Girardot' },
+  { id: 'co-m-bogota',         departmentId: 'co-d-bogota', name: 'Bogotá D.C.', isCapital: true },
+  { id: 'co-m-neiva',          departmentId: 'co-d-huila', name: 'Neiva', isCapital: true },
+  { id: 'co-m-pitalito',       departmentId: 'co-d-huila', name: 'Pitalito' },
+  { id: 'co-m-garzon',         departmentId: 'co-d-huila', name: 'Garzón' },
+  { id: 'co-m-cucuta',         departmentId: 'co-d-norte-santander', name: 'Cúcuta', isCapital: true },
+  { id: 'co-m-ocana',          departmentId: 'co-d-norte-santander', name: 'Ocaña' },
+  { id: 'co-m-pamplona',       departmentId: 'co-d-norte-santander', name: 'Pamplona' },
+  { id: 'co-m-armenia',        departmentId: 'co-d-quindio', name: 'Armenia', isCapital: true },
+  { id: 'co-m-calarca',        departmentId: 'co-d-quindio', name: 'Calarcá' },
+  { id: 'co-m-pereira',        departmentId: 'co-d-risaralda', name: 'Pereira', isCapital: true },
+  { id: 'co-m-dosquebradas',   departmentId: 'co-d-risaralda', name: 'Dosquebradas' },
+  { id: 'co-m-santa-rosa-cabal', departmentId: 'co-d-risaralda', name: 'Santa Rosa de Cabal' },
+  { id: 'co-m-bucaramanga',    departmentId: 'co-d-santander', name: 'Bucaramanga', isCapital: true },
+  { id: 'co-m-floridablanca',  departmentId: 'co-d-santander', name: 'Floridablanca' },
+  { id: 'co-m-giron',          departmentId: 'co-d-santander', name: 'Girón' },
+  { id: 'co-m-barrancabermeja',departmentId: 'co-d-santander', name: 'Barrancabermeja' },
+  { id: 'co-m-ibague',         departmentId: 'co-d-tolima', name: 'Ibagué', isCapital: true },
+  { id: 'co-m-espinal',        departmentId: 'co-d-tolima', name: 'Espinal' },
+  { id: 'co-m-melgar',         departmentId: 'co-d-tolima', name: 'Melgar' },
+  { id: 'co-m-barranquilla',   departmentId: 'co-d-atlantico', name: 'Barranquilla', isCapital: true },
+  { id: 'co-m-soledad',        departmentId: 'co-d-atlantico', name: 'Soledad' },
+  { id: 'co-m-malambo',        departmentId: 'co-d-atlantico', name: 'Malambo' },
+  { id: 'co-m-cartagena',      departmentId: 'co-d-bolivar', name: 'Cartagena', isCapital: true },
+  { id: 'co-m-magangue',       departmentId: 'co-d-bolivar', name: 'Magangué' },
+  { id: 'co-m-turbaco',        departmentId: 'co-d-bolivar', name: 'Turbaco' },
+  { id: 'co-m-valledupar',     departmentId: 'co-d-cesar', name: 'Valledupar', isCapital: true },
+  { id: 'co-m-aguachica',      departmentId: 'co-d-cesar', name: 'Aguachica' },
+  { id: 'co-m-monteria',       departmentId: 'co-d-cordoba', name: 'Montería', isCapital: true },
+  { id: 'co-m-cerete',         departmentId: 'co-d-cordoba', name: 'Cereté' },
+  { id: 'co-m-lorica',         departmentId: 'co-d-cordoba', name: 'Lorica' },
+  { id: 'co-m-riohacha',       departmentId: 'co-d-la-guajira', name: 'Riohacha', isCapital: true },
+  { id: 'co-m-maicao',         departmentId: 'co-d-la-guajira', name: 'Maicao' },
+  { id: 'co-m-santa-marta',    departmentId: 'co-d-magdalena', name: 'Santa Marta', isCapital: true },
+  { id: 'co-m-cienaga',        departmentId: 'co-d-magdalena', name: 'Ciénaga' },
+  { id: 'co-m-sincelejo',      departmentId: 'co-d-sucre', name: 'Sincelejo', isCapital: true },
+  { id: 'co-m-corozal',        departmentId: 'co-d-sucre', name: 'Corozal' },
+  { id: 'co-m-san-andres',     departmentId: 'co-d-san-andres', name: 'San Andrés', isCapital: true },
+  { id: 'co-m-providencia',    departmentId: 'co-d-san-andres', name: 'Providencia' },
+  { id: 'co-m-popayan',        departmentId: 'co-d-cauca', name: 'Popayán', isCapital: true },
+  { id: 'co-m-santander-quilichao', departmentId: 'co-d-cauca', name: 'Santander de Quilichao' },
+  { id: 'co-m-quibdo',         departmentId: 'co-d-choco', name: 'Quibdó', isCapital: true },
+  { id: 'co-m-istmina',        departmentId: 'co-d-choco', name: 'Istmina' },
+  { id: 'co-m-pasto',          departmentId: 'co-d-narino', name: 'Pasto', isCapital: true },
+  { id: 'co-m-tumaco',         departmentId: 'co-d-narino', name: 'Tumaco' },
+  { id: 'co-m-ipiales',        departmentId: 'co-d-narino', name: 'Ipiales' },
+  { id: 'co-m-cali',           departmentId: 'co-d-valle-del-cauca', name: 'Cali', isCapital: true },
+  { id: 'co-m-palmira',        departmentId: 'co-d-valle-del-cauca', name: 'Palmira' },
+  { id: 'co-m-buenaventura',   departmentId: 'co-d-valle-del-cauca', name: 'Buenaventura' },
+  { id: 'co-m-tulua',          departmentId: 'co-d-valle-del-cauca', name: 'Tuluá' },
+  { id: 'co-m-buga',           departmentId: 'co-d-valle-del-cauca', name: 'Buga' },
+  { id: 'co-m-arauca',         departmentId: 'co-d-arauca', name: 'Arauca', isCapital: true },
+  { id: 'co-m-tame',           departmentId: 'co-d-arauca', name: 'Tame' },
+  { id: 'co-m-saravena',       departmentId: 'co-d-arauca', name: 'Saravena' },
+  { id: 'co-m-yopal',          departmentId: 'co-d-casanare', name: 'Yopal', isCapital: true },
+  { id: 'co-m-aguazul',        departmentId: 'co-d-casanare', name: 'Aguazul' },
+  { id: 'co-m-villavicencio',  departmentId: 'co-d-meta', name: 'Villavicencio', isCapital: true },
+  { id: 'co-m-acacias',        departmentId: 'co-d-meta', name: 'Acacías' },
+  { id: 'co-m-granada-meta',   departmentId: 'co-d-meta', name: 'Granada' },
+  { id: 'co-m-puerto-carreno', departmentId: 'co-d-vichada', name: 'Puerto Carreño', isCapital: true },
+  { id: 'co-m-leticia',        departmentId: 'co-d-amazonas', name: 'Leticia', isCapital: true },
+  { id: 'co-m-puerto-narino',  departmentId: 'co-d-amazonas', name: 'Puerto Nariño' },
+  { id: 'co-m-florencia',      departmentId: 'co-d-caqueta', name: 'Florencia', isCapital: true },
+  { id: 'co-m-san-vicente-caguan', departmentId: 'co-d-caqueta', name: 'San Vicente del Caguán' },
+  { id: 'co-m-inirida',        departmentId: 'co-d-guainia', name: 'Inírida', isCapital: true },
+  { id: 'co-m-san-jose-guaviare', departmentId: 'co-d-guaviare', name: 'San José del Guaviare', isCapital: true },
+  { id: 'co-m-mocoa',          departmentId: 'co-d-putumayo', name: 'Mocoa', isCapital: true },
+  { id: 'co-m-puerto-asis',    departmentId: 'co-d-putumayo', name: 'Puerto Asís' },
+  { id: 'co-m-mitu',           departmentId: 'co-d-vaupes', name: 'Mitú', isCapital: true },
+
+  // Venezuela
+  { id: 've-m-caracas',        departmentId: 've-d-distrito-capital', name: 'Caracas', isCapital: true },
+  { id: 've-m-los-teques',     departmentId: 've-d-miranda', name: 'Los Teques', isCapital: true },
+  { id: 've-m-petare',         departmentId: 've-d-miranda', name: 'Petare' },
+  { id: 've-m-baruta',         departmentId: 've-d-miranda', name: 'Baruta' },
+  { id: 've-m-chacao',         departmentId: 've-d-miranda', name: 'Chacao' },
+  { id: 've-m-guarenas',       departmentId: 've-d-miranda', name: 'Guarenas' },
+  { id: 've-m-la-guaira',      departmentId: 've-d-la-guaira', name: 'La Guaira', isCapital: true },
+  { id: 've-m-maiquetia',      departmentId: 've-d-la-guaira', name: 'Maiquetía' },
+  { id: 've-m-catia-la-mar',   departmentId: 've-d-la-guaira', name: 'Catia La Mar' },
+  { id: 've-m-maracay',        departmentId: 've-d-aragua', name: 'Maracay', isCapital: true },
+  { id: 've-m-turmero',        departmentId: 've-d-aragua', name: 'Turmero' },
+  { id: 've-m-cagua',          departmentId: 've-d-aragua', name: 'Cagua' },
+  { id: 've-m-valencia',       departmentId: 've-d-carabobo', name: 'Valencia', isCapital: true },
+  { id: 've-m-puerto-cabello', departmentId: 've-d-carabobo', name: 'Puerto Cabello' },
+  { id: 've-m-guacara',        departmentId: 've-d-carabobo', name: 'Guacara' },
+  { id: 've-m-san-juan-morros',departmentId: 've-d-guarico', name: 'San Juan de los Morros', isCapital: true },
+  { id: 've-m-calabozo',       departmentId: 've-d-guarico', name: 'Calabozo' },
+  { id: 've-m-valle-pascua',   departmentId: 've-d-guarico', name: 'Valle de la Pascua' },
+  { id: 've-m-san-fernando-apure', departmentId: 've-d-apure', name: 'San Fernando de Apure', isCapital: true },
+  { id: 've-m-guasdualito',    departmentId: 've-d-apure', name: 'Guasdualito' },
+  { id: 've-m-san-carlos-ve',  departmentId: 've-d-cojedes', name: 'San Carlos', isCapital: true },
+  { id: 've-m-tinaquillo',     departmentId: 've-d-cojedes', name: 'Tinaquillo' },
+  { id: 've-m-guanare',        departmentId: 've-d-portuguesa', name: 'Guanare', isCapital: true },
+  { id: 've-m-acarigua',       departmentId: 've-d-portuguesa', name: 'Acarigua' },
+  { id: 've-m-araure',         departmentId: 've-d-portuguesa', name: 'Araure' },
+  { id: 've-m-barquisimeto',   departmentId: 've-d-lara', name: 'Barquisimeto', isCapital: true },
+  { id: 've-m-cabudare',       departmentId: 've-d-lara', name: 'Cabudare' },
+  { id: 've-m-carora',         departmentId: 've-d-lara', name: 'Carora' },
+  { id: 've-m-coro',           departmentId: 've-d-falcon', name: 'Coro', isCapital: true },
+  { id: 've-m-punto-fijo',     departmentId: 've-d-falcon', name: 'Punto Fijo' },
+  { id: 've-m-san-felipe',     departmentId: 've-d-yaracuy', name: 'San Felipe', isCapital: true },
+  { id: 've-m-yaritagua',      departmentId: 've-d-yaracuy', name: 'Yaritagua' },
+  { id: 've-m-maracaibo',      departmentId: 've-d-zulia', name: 'Maracaibo', isCapital: true },
+  { id: 've-m-cabimas',        departmentId: 've-d-zulia', name: 'Cabimas' },
+  { id: 've-m-ciudad-ojeda',   departmentId: 've-d-zulia', name: 'Ciudad Ojeda' },
+  { id: 've-m-san-francisco',  departmentId: 've-d-zulia', name: 'San Francisco' },
+  { id: 've-m-merida',         departmentId: 've-d-merida', name: 'Mérida', isCapital: true },
+  { id: 've-m-ejido',          departmentId: 've-d-merida', name: 'Ejido' },
+  { id: 've-m-el-vigia',       departmentId: 've-d-merida', name: 'El Vigía' },
+  { id: 've-m-san-cristobal',  departmentId: 've-d-tachira', name: 'San Cristóbal', isCapital: true },
+  { id: 've-m-tariba',         departmentId: 've-d-tachira', name: 'Táriba' },
+  { id: 've-m-rubio',          departmentId: 've-d-tachira', name: 'Rubio' },
+  { id: 've-m-trujillo',       departmentId: 've-d-trujillo', name: 'Trujillo', isCapital: true },
+  { id: 've-m-valera',         departmentId: 've-d-trujillo', name: 'Valera' },
+  { id: 've-m-barinas',        departmentId: 've-d-barinas', name: 'Barinas', isCapital: true },
+  { id: 've-m-socopo',         departmentId: 've-d-barinas', name: 'Socopó' },
+  { id: 've-m-barcelona',      departmentId: 've-d-anzoategui', name: 'Barcelona', isCapital: true },
+  { id: 've-m-puerto-la-cruz', departmentId: 've-d-anzoategui', name: 'Puerto La Cruz' },
+  { id: 've-m-lecheria',       departmentId: 've-d-anzoategui', name: 'Lechería' },
+  { id: 've-m-el-tigre',       departmentId: 've-d-anzoategui', name: 'El Tigre' },
+  { id: 've-m-maturin',        departmentId: 've-d-monagas', name: 'Maturín', isCapital: true },
+  { id: 've-m-caripito',       departmentId: 've-d-monagas', name: 'Caripito' },
+  { id: 've-m-cumana',         departmentId: 've-d-sucre', name: 'Cumaná', isCapital: true },
+  { id: 've-m-carupano',       departmentId: 've-d-sucre', name: 'Carúpano' },
+  { id: 've-m-la-asuncion',    departmentId: 've-d-nueva-esparta', name: 'La Asunción', isCapital: true },
+  { id: 've-m-porlamar',       departmentId: 've-d-nueva-esparta', name: 'Porlamar' },
+  { id: 've-m-pampatar',       departmentId: 've-d-nueva-esparta', name: 'Pampatar' },
+  { id: 've-m-ciudad-bolivar', departmentId: 've-d-bolivar', name: 'Ciudad Bolívar', isCapital: true },
+  { id: 've-m-ciudad-guayana', departmentId: 've-d-bolivar', name: 'Ciudad Guayana (Puerto Ordaz)' },
+  { id: 've-m-upata',          departmentId: 've-d-bolivar', name: 'Upata' },
+  { id: 've-m-puerto-ayacucho',departmentId: 've-d-amazonas', name: 'Puerto Ayacucho', isCapital: true },
+  { id: 've-m-tucupita',       departmentId: 've-d-delta-amacuro', name: 'Tucupita', isCapital: true },
+
+  // España (capital + principales de cada provincia)
+  { id: 'es-m-a-coruna',       departmentId: 'es-d-a-coruna', name: 'A Coruña', isCapital: true },
+  { id: 'es-m-santiago',       departmentId: 'es-d-a-coruna', name: 'Santiago de Compostela' },
+  { id: 'es-m-ferrol',         departmentId: 'es-d-a-coruna', name: 'Ferrol' },
+  { id: 'es-m-lugo',           departmentId: 'es-d-lugo', name: 'Lugo', isCapital: true },
+  { id: 'es-m-monforte',       departmentId: 'es-d-lugo', name: 'Monforte de Lemos' },
+  { id: 'es-m-ourense',        departmentId: 'es-d-ourense', name: 'Ourense', isCapital: true },
+  { id: 'es-m-verin',          departmentId: 'es-d-ourense', name: 'Verín' },
+  { id: 'es-m-pontevedra',     departmentId: 'es-d-pontevedra', name: 'Pontevedra', isCapital: true },
+  { id: 'es-m-vigo',           departmentId: 'es-d-pontevedra', name: 'Vigo' },
+  { id: 'es-m-marin',          departmentId: 'es-d-pontevedra', name: 'Marín' },
+  { id: 'es-m-oviedo',         departmentId: 'es-d-asturias', name: 'Oviedo', isCapital: true },
+  { id: 'es-m-gijon',          departmentId: 'es-d-asturias', name: 'Gijón' },
+  { id: 'es-m-aviles',         departmentId: 'es-d-asturias', name: 'Avilés' },
+  { id: 'es-m-santander',      departmentId: 'es-d-cantabria', name: 'Santander', isCapital: true },
+  { id: 'es-m-torrelavega',    departmentId: 'es-d-cantabria', name: 'Torrelavega' },
+  { id: 'es-m-bilbao',         departmentId: 'es-d-vizcaya', name: 'Bilbao', isCapital: true },
+  { id: 'es-m-barakaldo',      departmentId: 'es-d-vizcaya', name: 'Barakaldo' },
+  { id: 'es-m-getxo',          departmentId: 'es-d-vizcaya', name: 'Getxo' },
+  { id: 'es-m-san-sebastian',  departmentId: 'es-d-guipuzcoa', name: 'San Sebastián', isCapital: true },
+  { id: 'es-m-irun',           departmentId: 'es-d-guipuzcoa', name: 'Irún' },
+  { id: 'es-m-eibar',          departmentId: 'es-d-guipuzcoa', name: 'Eibar' },
+  { id: 'es-m-vitoria',        departmentId: 'es-d-alava', name: 'Vitoria-Gasteiz', isCapital: true },
+  { id: 'es-m-llodio',         departmentId: 'es-d-alava', name: 'Llodio' },
+  { id: 'es-m-pamplona',       departmentId: 'es-d-navarra', name: 'Pamplona', isCapital: true },
+  { id: 'es-m-tudela',         departmentId: 'es-d-navarra', name: 'Tudela' },
+  { id: 'es-m-estella',        departmentId: 'es-d-navarra', name: 'Estella' },
+  { id: 'es-m-logrono',        departmentId: 'es-d-la-rioja', name: 'Logroño', isCapital: true },
+  { id: 'es-m-calahorra',      departmentId: 'es-d-la-rioja', name: 'Calahorra' },
+  { id: 'es-m-haro',           departmentId: 'es-d-la-rioja', name: 'Haro' },
+  { id: 'es-m-huesca',         departmentId: 'es-d-huesca', name: 'Huesca', isCapital: true },
+  { id: 'es-m-monzon',         departmentId: 'es-d-huesca', name: 'Monzón' },
+  { id: 'es-m-jaca',           departmentId: 'es-d-huesca', name: 'Jaca' },
+  { id: 'es-m-zaragoza',       departmentId: 'es-d-zaragoza', name: 'Zaragoza', isCapital: true },
+  { id: 'es-m-calatayud',      departmentId: 'es-d-zaragoza', name: 'Calatayud' },
+  { id: 'es-m-teruel',         departmentId: 'es-d-teruel', name: 'Teruel', isCapital: true },
+  { id: 'es-m-alcaniz',        departmentId: 'es-d-teruel', name: 'Alcañiz' },
+  { id: 'es-m-barcelona',      departmentId: 'es-d-barcelona', name: 'Barcelona', isCapital: true },
+  { id: 'es-m-hospitalet',     departmentId: 'es-d-barcelona', name: "L'Hospitalet de Llobregat" },
+  { id: 'es-m-badalona',       departmentId: 'es-d-barcelona', name: 'Badalona' },
+  { id: 'es-m-terrassa',       departmentId: 'es-d-barcelona', name: 'Terrassa' },
+  { id: 'es-m-sabadell',       departmentId: 'es-d-barcelona', name: 'Sabadell' },
+  { id: 'es-m-mataro',         departmentId: 'es-d-barcelona', name: 'Mataró' },
+  { id: 'es-m-girona',         departmentId: 'es-d-girona', name: 'Girona', isCapital: true },
+  { id: 'es-m-figueres',       departmentId: 'es-d-girona', name: 'Figueres' },
+  { id: 'es-m-lloret',         departmentId: 'es-d-girona', name: 'Lloret de Mar' },
+  { id: 'es-m-lleida',         departmentId: 'es-d-lleida', name: 'Lleida', isCapital: true },
+  { id: 'es-m-balaguer',       departmentId: 'es-d-lleida', name: 'Balaguer' },
+  { id: 'es-m-tarragona',      departmentId: 'es-d-tarragona', name: 'Tarragona', isCapital: true },
+  { id: 'es-m-reus',           departmentId: 'es-d-tarragona', name: 'Reus' },
+  { id: 'es-m-tortosa',        departmentId: 'es-d-tarragona', name: 'Tortosa' },
+  { id: 'es-m-madrid',         departmentId: 'es-d-madrid', name: 'Madrid', isCapital: true },
+  { id: 'es-m-mostoles',       departmentId: 'es-d-madrid', name: 'Móstoles' },
+  { id: 'es-m-alcala-henares', departmentId: 'es-d-madrid', name: 'Alcalá de Henares' },
+  { id: 'es-m-fuenlabrada',    departmentId: 'es-d-madrid', name: 'Fuenlabrada' },
+  { id: 'es-m-leganes',        departmentId: 'es-d-madrid', name: 'Leganés' },
+  { id: 'es-m-getafe',         departmentId: 'es-d-madrid', name: 'Getafe' },
+  { id: 'es-m-alcorcon',       departmentId: 'es-d-madrid', name: 'Alcorcón' },
+  { id: 'es-m-avila',          departmentId: 'es-d-avila', name: 'Ávila', isCapital: true },
+  { id: 'es-m-arevalo',        departmentId: 'es-d-avila', name: 'Arévalo' },
+  { id: 'es-m-burgos',         departmentId: 'es-d-burgos', name: 'Burgos', isCapital: true },
+  { id: 'es-m-miranda-ebro',   departmentId: 'es-d-burgos', name: 'Miranda de Ebro' },
+  { id: 'es-m-aranda-duero',   departmentId: 'es-d-burgos', name: 'Aranda de Duero' },
+  { id: 'es-m-leon',           departmentId: 'es-d-leon', name: 'León', isCapital: true },
+  { id: 'es-m-ponferrada',     departmentId: 'es-d-leon', name: 'Ponferrada' },
+  { id: 'es-m-astorga',        departmentId: 'es-d-leon', name: 'Astorga' },
+  { id: 'es-m-palencia',       departmentId: 'es-d-palencia', name: 'Palencia', isCapital: true },
+  { id: 'es-m-aguilar-campoo', departmentId: 'es-d-palencia', name: 'Aguilar de Campoo' },
+  { id: 'es-m-salamanca',      departmentId: 'es-d-salamanca', name: 'Salamanca', isCapital: true },
+  { id: 'es-m-bejar',          departmentId: 'es-d-salamanca', name: 'Béjar' },
+  { id: 'es-m-ciudad-rodrigo', departmentId: 'es-d-salamanca', name: 'Ciudad Rodrigo' },
+  { id: 'es-m-segovia',        departmentId: 'es-d-segovia', name: 'Segovia', isCapital: true },
+  { id: 'es-m-cuellar',        departmentId: 'es-d-segovia', name: 'Cuéllar' },
+  { id: 'es-m-soria',          departmentId: 'es-d-soria', name: 'Soria', isCapital: true },
+  { id: 'es-m-almazan',        departmentId: 'es-d-soria', name: 'Almazán' },
+  { id: 'es-m-valladolid',     departmentId: 'es-d-valladolid', name: 'Valladolid', isCapital: true },
+  { id: 'es-m-medina-campo',   departmentId: 'es-d-valladolid', name: 'Medina del Campo' },
+  { id: 'es-m-laguna-duero',   departmentId: 'es-d-valladolid', name: 'Laguna de Duero' },
+  { id: 'es-m-zamora',         departmentId: 'es-d-zamora', name: 'Zamora', isCapital: true },
+  { id: 'es-m-benavente',      departmentId: 'es-d-zamora', name: 'Benavente' },
+  { id: 'es-m-toro',           departmentId: 'es-d-zamora', name: 'Toro' },
+  { id: 'es-m-albacete',       departmentId: 'es-d-albacete', name: 'Albacete', isCapital: true },
+  { id: 'es-m-hellin',         departmentId: 'es-d-albacete', name: 'Hellín' },
+  { id: 'es-m-villarrobledo',  departmentId: 'es-d-albacete', name: 'Villarrobledo' },
+  { id: 'es-m-ciudad-real',    departmentId: 'es-d-ciudad-real', name: 'Ciudad Real', isCapital: true },
+  { id: 'es-m-puertollano',    departmentId: 'es-d-ciudad-real', name: 'Puertollano' },
+  { id: 'es-m-tomelloso',      departmentId: 'es-d-ciudad-real', name: 'Tomelloso' },
+  { id: 'es-m-valdepenas',     departmentId: 'es-d-ciudad-real', name: 'Valdepeñas' },
+  { id: 'es-m-cuenca',         departmentId: 'es-d-cuenca', name: 'Cuenca', isCapital: true },
+  { id: 'es-m-tarancon',       departmentId: 'es-d-cuenca', name: 'Tarancón' },
+  { id: 'es-m-guadalajara',    departmentId: 'es-d-guadalajara', name: 'Guadalajara', isCapital: true },
+  { id: 'es-m-azuqueca',       departmentId: 'es-d-guadalajara', name: 'Azuqueca de Henares' },
+  { id: 'es-m-toledo',         departmentId: 'es-d-toledo', name: 'Toledo', isCapital: true },
+  { id: 'es-m-talavera',       departmentId: 'es-d-toledo', name: 'Talavera de la Reina' },
+  { id: 'es-m-illescas',       departmentId: 'es-d-toledo', name: 'Illescas' },
+  { id: 'es-m-badajoz',        departmentId: 'es-d-badajoz', name: 'Badajoz', isCapital: true },
+  { id: 'es-m-merida',         departmentId: 'es-d-badajoz', name: 'Mérida' },
+  { id: 'es-m-don-benito',     departmentId: 'es-d-badajoz', name: 'Don Benito' },
+  { id: 'es-m-almendralejo',   departmentId: 'es-d-badajoz', name: 'Almendralejo' },
+  { id: 'es-m-caceres',        departmentId: 'es-d-caceres', name: 'Cáceres', isCapital: true },
+  { id: 'es-m-plasencia',      departmentId: 'es-d-caceres', name: 'Plasencia' },
+  { id: 'es-m-navalmoral',     departmentId: 'es-d-caceres', name: 'Navalmoral de la Mata' },
+  { id: 'es-m-valencia',       departmentId: 'es-d-valencia', name: 'Valencia', isCapital: true },
+  { id: 'es-m-gandia',         departmentId: 'es-d-valencia', name: 'Gandía' },
+  { id: 'es-m-torrente',       departmentId: 'es-d-valencia', name: 'Torrente' },
+  { id: 'es-m-paterna',        departmentId: 'es-d-valencia', name: 'Paterna' },
+  { id: 'es-m-sagunto',        departmentId: 'es-d-valencia', name: 'Sagunto' },
+  { id: 'es-m-alicante',       departmentId: 'es-d-alicante', name: 'Alicante', isCapital: true },
+  { id: 'es-m-elche',          departmentId: 'es-d-alicante', name: 'Elche' },
+  { id: 'es-m-torrevieja',     departmentId: 'es-d-alicante', name: 'Torrevieja' },
+  { id: 'es-m-orihuela',       departmentId: 'es-d-alicante', name: 'Orihuela' },
+  { id: 'es-m-benidorm',       departmentId: 'es-d-alicante', name: 'Benidorm' },
+  { id: 'es-m-castellon',      departmentId: 'es-d-castellon', name: 'Castellón de la Plana', isCapital: true },
+  { id: 'es-m-villarreal',     departmentId: 'es-d-castellon', name: 'Villarreal' },
+  { id: 'es-m-burriana',       departmentId: 'es-d-castellon', name: 'Burriana' },
+  { id: 'es-m-palma',          departmentId: 'es-d-baleares', name: 'Palma', isCapital: true },
+  { id: 'es-m-calvia',         departmentId: 'es-d-baleares', name: 'Calviá' },
+  { id: 'es-m-ibiza',          departmentId: 'es-d-baleares', name: 'Ibiza' },
+  { id: 'es-m-manacor',        departmentId: 'es-d-baleares', name: 'Manacor' },
+  { id: 'es-m-murcia',         departmentId: 'es-d-murcia', name: 'Murcia', isCapital: true },
+  { id: 'es-m-cartagena',      departmentId: 'es-d-murcia', name: 'Cartagena' },
+  { id: 'es-m-lorca',          departmentId: 'es-d-murcia', name: 'Lorca' },
+  { id: 'es-m-molina-segura',  departmentId: 'es-d-murcia', name: 'Molina de Segura' },
+  { id: 'es-m-almeria',        departmentId: 'es-d-almeria', name: 'Almería', isCapital: true },
+  { id: 'es-m-roquetas',       departmentId: 'es-d-almeria', name: 'Roquetas de Mar' },
+  { id: 'es-m-el-ejido',       departmentId: 'es-d-almeria', name: 'El Ejido' },
+  { id: 'es-m-cadiz',          departmentId: 'es-d-cadiz', name: 'Cádiz', isCapital: true },
+  { id: 'es-m-jerez',          departmentId: 'es-d-cadiz', name: 'Jerez de la Frontera' },
+  { id: 'es-m-algeciras',      departmentId: 'es-d-cadiz', name: 'Algeciras' },
+  { id: 'es-m-san-fernando',   departmentId: 'es-d-cadiz', name: 'San Fernando' },
+  { id: 'es-m-puerto-santa-maria', departmentId: 'es-d-cadiz', name: 'El Puerto de Santa María' },
+  { id: 'es-m-cordoba',        departmentId: 'es-d-cordoba', name: 'Córdoba', isCapital: true },
+  { id: 'es-m-lucena',         departmentId: 'es-d-cordoba', name: 'Lucena' },
+  { id: 'es-m-puente-genil',   departmentId: 'es-d-cordoba', name: 'Puente Genil' },
+  { id: 'es-m-granada',        departmentId: 'es-d-granada', name: 'Granada', isCapital: true },
+  { id: 'es-m-motril',         departmentId: 'es-d-granada', name: 'Motril' },
+  { id: 'es-m-almunecar',      departmentId: 'es-d-granada', name: 'Almuñécar' },
+  { id: 'es-m-huelva',         departmentId: 'es-d-huelva', name: 'Huelva', isCapital: true },
+  { id: 'es-m-lepe',           departmentId: 'es-d-huelva', name: 'Lepe' },
+  { id: 'es-m-almonte',        departmentId: 'es-d-huelva', name: 'Almonte' },
+  { id: 'es-m-jaen',           departmentId: 'es-d-jaen', name: 'Jaén', isCapital: true },
+  { id: 'es-m-linares',        departmentId: 'es-d-jaen', name: 'Linares' },
+  { id: 'es-m-andujar',        departmentId: 'es-d-jaen', name: 'Andújar' },
+  { id: 'es-m-malaga',         departmentId: 'es-d-malaga', name: 'Málaga', isCapital: true },
+  { id: 'es-m-marbella',       departmentId: 'es-d-malaga', name: 'Marbella' },
+  { id: 'es-m-mijas',          departmentId: 'es-d-malaga', name: 'Mijas' },
+  { id: 'es-m-fuengirola',     departmentId: 'es-d-malaga', name: 'Fuengirola' },
+  { id: 'es-m-velez-malaga',   departmentId: 'es-d-malaga', name: 'Vélez-Málaga' },
+  { id: 'es-m-torremolinos',   departmentId: 'es-d-malaga', name: 'Torremolinos' },
+  { id: 'es-m-sevilla',        departmentId: 'es-d-sevilla', name: 'Sevilla', isCapital: true },
+  { id: 'es-m-dos-hermanas',   departmentId: 'es-d-sevilla', name: 'Dos Hermanas' },
+  { id: 'es-m-alcala-guadaira',departmentId: 'es-d-sevilla', name: 'Alcalá de Guadaíra' },
+  { id: 'es-m-utrera',         departmentId: 'es-d-sevilla', name: 'Utrera' },
+  { id: 'es-m-ceuta',          departmentId: 'es-d-ceuta', name: 'Ceuta', isCapital: true },
+  { id: 'es-m-melilla',        departmentId: 'es-d-melilla', name: 'Melilla', isCapital: true },
+  { id: 'es-m-las-palmas',     departmentId: 'es-d-las-palmas', name: 'Las Palmas de Gran Canaria', isCapital: true },
+  { id: 'es-m-telde',          departmentId: 'es-d-las-palmas', name: 'Telde' },
+  { id: 'es-m-arrecife',       departmentId: 'es-d-las-palmas', name: 'Arrecife' },
+  { id: 'es-m-sc-tenerife',    departmentId: 'es-d-sc-tenerife', name: 'Santa Cruz de Tenerife', isCapital: true },
+  { id: 'es-m-la-laguna',      departmentId: 'es-d-sc-tenerife', name: 'La Laguna' },
+  { id: 'es-m-arona',          departmentId: 'es-d-sc-tenerife', name: 'Arona' },
+  { id: 'es-m-adeje',          departmentId: 'es-d-sc-tenerife', name: 'Adeje' },
+
+  // Portugal
+  { id: 'pt-m-viana-do-castelo', departmentId: 'pt-d-viana-do-castelo', name: 'Viana do Castelo', isCapital: true },
+  { id: 'pt-m-ponte-de-lima',    departmentId: 'pt-d-viana-do-castelo', name: 'Ponte de Lima' },
+  { id: 'pt-m-caminha',          departmentId: 'pt-d-viana-do-castelo', name: 'Caminha' },
+  { id: 'pt-m-braga',            departmentId: 'pt-d-braga', name: 'Braga', isCapital: true },
+  { id: 'pt-m-guimaraes',        departmentId: 'pt-d-braga', name: 'Guimarães' },
+  { id: 'pt-m-famalicao',        departmentId: 'pt-d-braga', name: 'Vila Nova de Famalicão' },
+  { id: 'pt-m-barcelos',         departmentId: 'pt-d-braga', name: 'Barcelos' },
+  { id: 'pt-m-porto',            departmentId: 'pt-d-porto', name: 'Porto', isCapital: true },
+  { id: 'pt-m-vila-nova-gaia',   departmentId: 'pt-d-porto', name: 'Vila Nova de Gaia' },
+  { id: 'pt-m-matosinhos',       departmentId: 'pt-d-porto', name: 'Matosinhos' },
+  { id: 'pt-m-maia',             departmentId: 'pt-d-porto', name: 'Maia' },
+  { id: 'pt-m-gondomar',         departmentId: 'pt-d-porto', name: 'Gondomar' },
+  { id: 'pt-m-vila-real',        departmentId: 'pt-d-vila-real', name: 'Vila Real', isCapital: true },
+  { id: 'pt-m-chaves',           departmentId: 'pt-d-vila-real', name: 'Chaves' },
+  { id: 'pt-m-peso-regua',       departmentId: 'pt-d-vila-real', name: 'Peso da Régua' },
+  { id: 'pt-m-braganca',         departmentId: 'pt-d-braganca', name: 'Bragança', isCapital: true },
+  { id: 'pt-m-mirandela',        departmentId: 'pt-d-braganca', name: 'Mirandela' },
+  { id: 'pt-m-aveiro',           departmentId: 'pt-d-aveiro', name: 'Aveiro', isCapital: true },
+  { id: 'pt-m-agueda',           departmentId: 'pt-d-aveiro', name: 'Águeda' },
+  { id: 'pt-m-espinho',          departmentId: 'pt-d-aveiro', name: 'Espinho' },
+  { id: 'pt-m-ovar',             departmentId: 'pt-d-aveiro', name: 'Ovar' },
+  { id: 'pt-m-feira',            departmentId: 'pt-d-aveiro', name: 'Santa Maria da Feira' },
+  { id: 'pt-m-coimbra',          departmentId: 'pt-d-coimbra', name: 'Coimbra', isCapital: true },
+  { id: 'pt-m-figueira-foz',     departmentId: 'pt-d-coimbra', name: 'Figueira da Foz' },
+  { id: 'pt-m-cantanhede',       departmentId: 'pt-d-coimbra', name: 'Cantanhede' },
+  { id: 'pt-m-leiria',           departmentId: 'pt-d-leiria', name: 'Leiria', isCapital: true },
+  { id: 'pt-m-caldas-rainha',    departmentId: 'pt-d-leiria', name: 'Caldas da Rainha' },
+  { id: 'pt-m-marinha-grande',   departmentId: 'pt-d-leiria', name: 'Marinha Grande' },
+  { id: 'pt-m-alcobaca',         departmentId: 'pt-d-leiria', name: 'Alcobaça' },
+  { id: 'pt-m-viseu',            departmentId: 'pt-d-viseu', name: 'Viseu', isCapital: true },
+  { id: 'pt-m-lamego',           departmentId: 'pt-d-viseu', name: 'Lamego' },
+  { id: 'pt-m-guarda',           departmentId: 'pt-d-guarda', name: 'Guarda', isCapital: true },
+  { id: 'pt-m-seia',             departmentId: 'pt-d-guarda', name: 'Seia' },
+  { id: 'pt-m-castelo-branco',   departmentId: 'pt-d-castelo-branco', name: 'Castelo Branco', isCapital: true },
+  { id: 'pt-m-covilha',          departmentId: 'pt-d-castelo-branco', name: 'Covilhã' },
+  { id: 'pt-m-fundao',           departmentId: 'pt-d-castelo-branco', name: 'Fundão' },
+  { id: 'pt-m-lisboa',           departmentId: 'pt-d-lisboa', name: 'Lisboa', isCapital: true },
+  { id: 'pt-m-sintra',           departmentId: 'pt-d-lisboa', name: 'Sintra' },
+  { id: 'pt-m-cascais',          departmentId: 'pt-d-lisboa', name: 'Cascais' },
+  { id: 'pt-m-loures',           departmentId: 'pt-d-lisboa', name: 'Loures' },
+  { id: 'pt-m-amadora',          departmentId: 'pt-d-lisboa', name: 'Amadora' },
+  { id: 'pt-m-odivelas',         departmentId: 'pt-d-lisboa', name: 'Odivelas' },
+  { id: 'pt-m-setubal',          departmentId: 'pt-d-setubal', name: 'Setúbal', isCapital: true },
+  { id: 'pt-m-almada',           departmentId: 'pt-d-setubal', name: 'Almada' },
+  { id: 'pt-m-seixal',           departmentId: 'pt-d-setubal', name: 'Seixal' },
+  { id: 'pt-m-barreiro',         departmentId: 'pt-d-setubal', name: 'Barreiro' },
+  { id: 'pt-m-portalegre',       departmentId: 'pt-d-portalegre', name: 'Portalegre', isCapital: true },
+  { id: 'pt-m-elvas',            departmentId: 'pt-d-portalegre', name: 'Elvas' },
+  { id: 'pt-m-evora',            departmentId: 'pt-d-evora', name: 'Évora', isCapital: true },
+  { id: 'pt-m-montemor-novo',    departmentId: 'pt-d-evora', name: 'Montemor-o-Novo' },
+  { id: 'pt-m-estremoz',         departmentId: 'pt-d-evora', name: 'Estremoz' },
+  { id: 'pt-m-beja',             departmentId: 'pt-d-beja', name: 'Beja', isCapital: true },
+  { id: 'pt-m-moura',            departmentId: 'pt-d-beja', name: 'Moura' },
+  { id: 'pt-m-serpa',            departmentId: 'pt-d-beja', name: 'Serpa' },
+  { id: 'pt-m-faro',             departmentId: 'pt-d-faro', name: 'Faro', isCapital: true },
+  { id: 'pt-m-loule',            departmentId: 'pt-d-faro', name: 'Loulé' },
+  { id: 'pt-m-portimao',         departmentId: 'pt-d-faro', name: 'Portimão' },
+  { id: 'pt-m-albufeira',        departmentId: 'pt-d-faro', name: 'Albufeira' },
+  { id: 'pt-m-lagos',            departmentId: 'pt-d-faro', name: 'Lagos' },
+  { id: 'pt-m-olhao',            departmentId: 'pt-d-faro', name: 'Olhão' },
+  { id: 'pt-m-tavira',           departmentId: 'pt-d-faro', name: 'Tavira' },
+  { id: 'pt-m-ponta-delgada',    departmentId: 'pt-d-acores', name: 'Ponta Delgada', isCapital: true },
+  { id: 'pt-m-angra-heroismo',   departmentId: 'pt-d-acores', name: 'Angra do Heroísmo' },
+  { id: 'pt-m-horta',            departmentId: 'pt-d-acores', name: 'Horta' },
+  { id: 'pt-m-praia-vitoria',    departmentId: 'pt-d-acores', name: 'Praia da Vitória' },
+  { id: 'pt-m-ribeira-grande',   departmentId: 'pt-d-acores', name: 'Ribeira Grande' },
+  { id: 'pt-m-funchal',          departmentId: 'pt-d-madeira', name: 'Funchal', isCapital: true },
+  { id: 'pt-m-camara-lobos',     departmentId: 'pt-d-madeira', name: 'Câmara de Lobos' },
+  { id: 'pt-m-santa-cruz-madeira', departmentId: 'pt-d-madeira', name: 'Santa Cruz' },
+  { id: 'pt-m-machico',          departmentId: 'pt-d-madeira', name: 'Machico' },
+];
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+export const getRegionsByCountry = (countryId: string) =>
+  regions.filter(r => r.countryId === countryId);
+
+export const getDepartmentsByRegion = (regionId: string) =>
+  departments.filter(d => d.regionId === regionId);
+
+export const getDepartmentsByCountry = (countryId: string) =>
+  departments.filter(d => d.countryId === countryId);
+
+export const getMunicipiosByDepartment = (departmentId: string) =>
+  municipios.filter(m => m.departmentId === departmentId);
+
+Summary of what's in there:
+
+9 countries with ISO codes, currencies, flags
+46 UMA regions (custom groupings — to validate with business)
+186 departments/provinces/states (complete for all 9 countries)
+~430 municipios (capital + main cities per department)
+🎨 PART 2 — Figma Make prompt
+Paste this into Figma Make to build the UI:
+
+Build a Geographic Hierarchy Manager for PromoUMA, an automotive campaign
+management app. Use the TypeScript data file I'm providing (countries,
+regions, departments, municipios). The app is React + Tailwind + shadcn/ui.
+
+CONTEXT
+UMA operates in 9 countries (GT, SV, HN, NI, CR, CO, VE, ES, PT). The
+hierarchy is:
+  Country → Region (custom UMA grouping) → Department/Province → Municipio
+"Region" is NOT the administrative region — it's a commercial grouping that
+UMA defines to cluster departments for pricing campaigns.
+
+SCREENS TO BUILD
+
+1. GEOGRAPHY EXPLORER (main view)
+   - Left sidebar: collapsible tree: Country > Region > Department > Municipio
+   - Each level shows count badge (e.g., "Colombia • 5 regions • 33 depts • 83 munis")
+   - Search bar at top that filters the tree live (fuzzy match on any level)
+   - Country switcher at top with flag emojis
+   - Main panel (right): when a node is selected, show details card:
+     * Breadcrumb (Colombia > Andina > Antioquia > Medellín)
+     * Metadata (capital, ISO code, currency for countries)
+     * Children list with inline actions (edit, add, deactivate)
+     * "Is capital" badge on capital municipios
+   - Top-right: "Add Region", "Import from CSV", "Export" buttons
+
+2. REGION MANAGER (dialog/drawer)
+   - Create/edit a UMA Region
+   - Fields: name, description, country (read-only when editing)
+   - Department multi-select with search — two-column picker:
+     left = available departments in country (not assigned)
+     right = departments in this region
+     Arrows to move between
+   - Save / Cancel
+
+3. CAMPAIGN GEOGRAPHY PICKER (used inside CampaignBuilder wizard, step 3)
+   Scope selector (radio cards):
+     ○ National        ○ Regional        ○ Departmental        ○ Municipal
+   Then based on scope:
+     - National: just show "All of {country}" confirmation
+     - Regional: checkbox list of UMA regions, grouped, with dept counts
+     - Departmental: cascading: pick regions → checkbox list of departments
+     - Municipal: cascading: pick region → department → checkbox list of municipios
+   Show running count at bottom: "Selected: 3 regions, 14 departments, 82 municipios"
+   Bulk actions: "Select all Andina", "Clear selection"
+
+4. BULK IMPORT WIZARD
+   - Upload CSV
+   - Column mapping (country_code, region, department, municipio)
+   - Preview table with validation errors highlighted
+   - Confirm import
+
+DESIGN SYSTEM
+- Use shadcn/ui: Card, Badge, Button, Input, Checkbox, Select, Dialog,
+  Drawer, Tabs, Tree (build custom collapsible), Table, Tooltip
+- Tailwind
+- Color accent: UMA orange (#FF6600) for active/selected states
+- Country flags as emoji (🇬🇹 🇸🇻 🇭🇳 🇳🇮 🇨🇷 🇨🇴 🇻🇪 🇪🇸 🇵🇹)
+- Empty states with friendly illustrations
+- Responsive: sidebar collapses on mobile
+
+DATA
+Use the provided countries/regions/departments/municipios arrays. Helper
+functions: getRegionsByCountry, getDepartmentsByRegion, getMunicipiosByDepartment.
+All IDs are strings like "co-d-antioquia". Keep those IDs stable.
+
+INTERACTIONS
+- Clicking a country in sidebar expands its regions
+- Clicking a region expands its departments
+- Hovering a node shows quick actions
+- Dragging a department between regions reassigns it (only within same country)
+- Search highlights matches in yellow across all levels
+
+IMPORTANT
+- UMA regions are editable business data (not immutable geography).
+- Departments/provinces are official admin divisions — read-only, cannot be
+  renamed or moved to another country.
+- Municipios can be added/edited by admins (full catalog will be imported
+  from official stat sources).
+- Show a "proposed" badge on regions until an admin confirms them.
+
+✅ What I also updated in the repo
+I added the Municipio interface to src/app/data/mockData.ts on branch claude/cotizador-backend-setup-rJsUo so the types are ready when you wire the data in. Want me to also commit the full geographyData.ts file to the branch so it's in the repo, or are you keeping Figma as the source of truth for now?

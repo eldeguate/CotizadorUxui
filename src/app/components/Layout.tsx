@@ -12,6 +12,10 @@ import {
   GitBranch,
   Link2,
   Layers,
+  Package,
+  MapPin,
+  Users,
+  ChevronDown,
 } from 'lucide-react';
 import { currentUser } from '../data/mockData';
 import { useState } from 'react';
@@ -19,7 +23,15 @@ import { useState } from 'react';
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { to: '/campaigns', label: 'Campañas', icon: Megaphone },
-  { to: '/master-data', label: 'Datos Maestros', icon: Database },
+  {
+    label: 'Datos Maestros',
+    icon: Database,
+    children: [
+      { to: '/master-data/products', label: 'Productos', icon: Package },
+      { to: '/master-data/geography', label: 'Geografías y Canales', icon: MapPin },
+      { to: '/master-data/users', label: 'Usuarios', icon: Users },
+    ],
+  },
   { to: '/hierarchy-config', label: 'Configuración Jerarquía', icon: GitBranch },
   { to: '/model-mappings', label: 'Mapeos Externos', icon: Link2 },
   { to: '/external-systems', label: 'Sistemas Externos', icon: Layers },
@@ -46,6 +58,65 @@ function NavItem({ to, label, icon: Icon, exact }: { to: string; label: string; 
       <Icon size={18} strokeWidth={isActive ? 2 : 1.75} />
       <span style={{ fontSize: '0.875rem', fontWeight: isActive ? 600 : 500 }}>{label}</span>
     </NavLink>
+  );
+}
+
+function NavItemWithChildren({
+  label,
+  icon: Icon,
+  children,
+}: {
+  label: string;
+  icon: React.ElementType;
+  children: Array<{ to: string; label: string; icon: React.ElementType }>;
+}) {
+  const [isOpen, setIsOpen] = useState(true);
+  const location = useLocation();
+  const isAnyChildActive = children.some((child) => location.pathname.startsWith(child.to));
+
+  return (
+    <div>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 group select-none ${
+          isAnyChildActive
+            ? 'bg-gray-100 text-gray-900'
+            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+        }`}
+      >
+        <Icon size={18} strokeWidth={isAnyChildActive ? 2 : 1.75} />
+        <span style={{ fontSize: '0.875rem', fontWeight: isAnyChildActive ? 600 : 500 }}>
+          {label}
+        </span>
+        <ChevronDown
+          size={14}
+          className={`ml-auto transition-transform ${isOpen ? '' : '-rotate-90'}`}
+        />
+      </button>
+      {isOpen && (
+        <div className="mt-1 ml-6 space-y-0.5">
+          {children.map((child) => {
+            const isActive = location.pathname.startsWith(child.to);
+            return (
+              <NavLink
+                key={child.to}
+                to={child.to}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-150 ${
+                  isActive
+                    ? 'bg-[#007AFF] text-white shadow-[0_2px_8px_rgba(0,122,255,0.2)]'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }`}
+              >
+                <child.icon size={16} strokeWidth={isActive ? 2 : 1.75} />
+                <span style={{ fontSize: '0.8125rem', fontWeight: isActive ? 600 : 500 }}>
+                  {child.label}
+                </span>
+              </NavLink>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -94,9 +165,18 @@ export function Layout() {
 
         {/* Navigation */}
         <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
-          {navItems.map(item => (
-            <NavItem key={item.to} {...item} />
-          ))}
+          {navItems.map((item) =>
+            'children' in item ? (
+              <NavItemWithChildren
+                key={item.label}
+                label={item.label}
+                icon={item.icon}
+                children={item.children}
+              />
+            ) : (
+              <NavItem key={item.to} {...item} />
+            )
+          )}
 
           {/* Divider */}
           <div className="h-px bg-gray-100 my-3 mx-1" />

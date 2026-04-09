@@ -5,7 +5,8 @@ import {
 } from 'lucide-react';
 import { format, parse, isValid } from 'date-fns';
 import { useAppContext } from '../context/AppContext';
-import { skus, regions, departments, countries } from '../data/mockData';
+import { skus } from '../data/mockData';
+import { geoRegions as regions, geoDepartments as departments, geoCountries as countries } from '../data/geographyData';
 import type { Campaign, CampaignLine, DiscountType, GeographyScope, SKU } from '../data/mockData';
 import { Calendar } from '../components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';

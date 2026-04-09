@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Plus, Search, Pencil, Trash2, Check, X, Database, Tag, Cpu, Package, MapPin } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
-import { brands as allBrands, categories, regions, departments } from '../data/mockData';
+import { brands as allBrands, categories } from '../data/mockData';
+import { geoRegions as regions, geoDepartments as departments } from '../data/geographyData';
 
 type TabKey = 'brands' | 'models' | 'skus' | 'geography';
 
