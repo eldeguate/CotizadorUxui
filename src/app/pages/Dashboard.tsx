@@ -178,12 +178,12 @@ export function Dashboard() {
             <AreaChart id="dashboard-campaign-chart" data={monthlyCampaignStats} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="dashboardColorCampaigns" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#007AFF" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#007AFF" stopOpacity={0} />
+                  <stop key="campaigns-start" offset="5%" stopColor="#007AFF" stopOpacity={0.15} />
+                  <stop key="campaigns-end" offset="95%" stopColor="#007AFF" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="dashboardColorExported" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#34C759" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#34C759" stopOpacity={0} />
+                  <stop key="exported-start" offset="5%" stopColor="#34C759" stopOpacity={0.15} />
+                  <stop key="exported-end" offset="95%" stopColor="#34C759" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#F0F0F0" vertical={false} />
